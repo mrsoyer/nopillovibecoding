@@ -1,0 +1,26 @@
+---
+paths:
+  - "CLAUDE.md"
+---
+
+# Regles pour CLAUDE.md
+
+## Taille
+- Maintenir CLAUDE.md < 80 lignes apres edition.
+- Au-dela, l'adherence de Claude aux regles chute (cf. context-guardian check #1).
+- Sortir le detail dans `docs/` et linker depuis CLAUDE.md.
+
+## Structure
+- Premiere ligne : `# CLAUDE.md — <nom-projet>`.
+- 3 premieres lignes ET 3 dernieres lignes doivent rappeler les regles MCP critiques (primacy + recency).
+- Sections obligatoires : Stack, Conventions, Commandes utiles, Cibles de perf.
+
+## Anti-patterns
+- Pas de schema DB inline (> 10 lignes SQL) — sortir dans `docs/db/schema.md`.
+- Pas de "Phases" ou "Priorites de developpement" — c'est du projet, pas du contexte.
+- Pas de listes exhaustives de fichiers — donner des patterns generaux.
+- Pas de "TODO" qui trainent — utiliser `docs/todo.md` a la place.
+
+## Verification
+A executer regulierement : `/context-guardian` ou "verifie le contexte".
+Score cible : >= 70/80.

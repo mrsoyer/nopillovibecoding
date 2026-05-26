@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Formation Vibecoding J1 — Skill / Rule / MCP / Hook</title>
+
+  <!-- Reveal.js 5 core CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.css">
+
+  <!-- Theme base white (override par nopillo.css) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/theme/white.css" id="theme">
+
+  <!-- Tokens DS Nopillo + theme custom -->
+  <link rel="stylesheet" href="theme/tokens.css">
+  <link rel="stylesheet" href="theme/nopillo.css">
+
+  <!-- Futura PT via Adobe Typekit -->
+  <link rel="stylesheet" href="https://use.typekit.net/c1b0b72bff15bb9715f23b2ce31c51654439d865.css">
+
+  <!-- Plugin Highlight.js theme pour code blocks -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/highlight/monokai.css">
+</head>
+<body>
+
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 1 — TITRE                                              -->
+      <!-- ============================================================ -->
+      <section class="slide-titre">
+        <img src="assets/logo-nopillo.svg" class="logo" alt="Nopillo">
+        <h1>Skill / Rule / MCP / Hook</h1>
+        <p class="subtitle">Les 4 mecanismes pour ancrer Claude dans la realite de TON projet.</p>
+        <p class="meta">Formation Vibecoding · Jour 1 · Thomas (Feaderz)</p>
+
+        <aside class="notes">
+          Apres 40 min, vous saurez quand utiliser chaque mecanisme.
+          Vous allez l'appliquer immediatement en creant VOTRE skill cet apres-midi.
+          Insister sur la promesse : repartir avec un artefact dans .claude/skills/[nom-leur-skill]/.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 2 — LE PROBLEME                                        -->
+      <!-- ============================================================ -->
+      <section>
+        <h2>Le probleme</h2>
+        <p>A chaque conversation, Claude oublie :</p>
+        <ul>
+          <li>Tes conventions de code</li>
+          <li>L'architecture de ton projet</li>
+          <li>Tes workflows recurrents</li>
+          <li>Tes regles de qualite</li>
+        </ul>
+        <div class="card card-soft" style="margin-top: 0.6em;">
+          <strong>Consequences :</strong>
+          <ul style="margin-bottom: 0;">
+            <li>Tu retapes tout a chaque session</li>
+            <li>Resultats incoherents entre devs</li>
+            <li>L'IA "hallucine" faute de contexte</li>
+          </ul>
+        </div>
+
+        <aside class="notes">
+          Question : qui a deja vu Claude faire un truc qui n'a rien a voir ?
+          Cause #1 : il n'a pas le contexte de ton projet.
+          Solution : 4 mecanismes pour persister le contexte.
+          Faire lever la main : "qui a deja eu une hallucination ?" — la moitie de la salle.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 3 — LES 5 MECANISMES                                   -->
+      <!-- ============================================================ -->
+      <section>
+        <h2>Les 5 mecanismes de Claude Code</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Mecanisme</th>
+              <th>Quand</th>
+              <th>Comment c'est charge</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>CLAUDE.md</code></td>
+              <td>Regles globales projet</td>
+              <td>Auto chaque session</td>
+            </tr>
+            <tr>
+              <td><code>Rule</code></td>
+              <td>CE QUE fait UN fichier</td>
+              <td>Auto si match <code>paths:</code></td>
+            </tr>
+            <tr>
+              <td><code>Skill</code></td>
+              <td>COMMENT faire UN workflow</td>
+              <td>A la demande (trigger)</td>
+            </tr>
+            <tr>
+              <td><code>MCP</code></td>
+              <td>Outils externes</td>
+              <td>Au boot session</td>
+            </tr>
+            <tr>
+              <td><code>Hook</code></td>
+              <td>Action qui DOIT s'executer</td>
+              <td>Lifecycle event</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="muted" style="margin-top: 0.8em;">
+          <strong>Skill</strong> = competence (verbe). <strong>Rule</strong> = doc d'un fichier (nom).
+        </p>
+
+        <aside class="notes">
+          Skill = competence (verbe). Rule = doc d'un fichier (nom).
+          C'est le truc le plus important de la journee. On le repete.
+          On va voir chacun en detail dans les 8 slides suivantes.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 4 — CLAUDE.md LE CONTEXTE PERMANENT                    -->
+      <!-- ============================================================ -->
+      <section>
+        <h2>CLAUDE.md — le contexte permanent</h2>
+        <ul style="font-size: 0.85em;">
+          <li>📄 Fichier : <code>CLAUDE.md</code> a la racine du projet</li>
+          <li>🔄 Charge : automatiquement chaque session</li>
+          <li>🎯 Contenu : conventions globales</li>
+        </ul>
+        <p class="muted">Exemple (nopillo-landing-exemple) :</p>
+<pre><code class="language-markdown"># CLAUDE.md
+## Stack
+- Astro 6 + Tailwind 4 + Supabase + Netlify
+## Conventions
+- PUBLIC_* pour env client
+- Composants .astro statique, .tsx pour islands
+## Cibles
+- Lighthouse >= 95
+- LCP < 2s</code></pre>
+
+        <aside class="notes">
+          C'est la fiche d'identite de votre projet.
+          Stack, conventions, cibles de qualite.
+          Charge dans CHAQUE conversation, sans rien faire.
+          Montrer le vrai CLAUDE.md du repo template s'ils l'ont sous la main.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 5 — REGLE 80 LIGNES                                    -->
+      <!-- ============================================================ -->
+      <section>
+        <h2>CLAUDE.md : la regle des 80 lignes</h2>
+        <div class="frame-primary center" style="margin: 0.4em 0;">
+          <p style="font-size: 1.2em; margin: 0.3em 0;">
+            <strong style="color: var(--color-brand-mint);">&lt; 80 lignes</strong> &nbsp;→&nbsp; Claude suit
+          </p>
+          <p style="font-size: 1.2em; margin: 0.3em 0;">
+            <strong style="color: #DC2626;">&gt; 80 lignes</strong> &nbsp;→&nbsp; Adherence chute
+          </p>
+        </div>
+        <p>Si tu depasses :</p>
+        <ul>
+          <li>Sortir le detail dans <code>docs/</code></li>
+          <li>Linker depuis <code>CLAUDE.md</code></li>
+          <li>Verifier avec <code>/context-guardian</code></li>
+        </ul>
+        <p class="muted">Source : test reel sur 100+ projets.</p>
+
+        <aside class="notes">
+          C'est verifie en pratique. > 80 lignes, Claude ignore.
+          Concept : recence + primacy. Trop d'info = dilution.
+          Si t'as 200 lignes de regles, c'est que t'as 3 rules et 1 skill cachee dedans.
+          Demander : "qui a un CLAUDE.md > 80 lignes ?" — faire confesser.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 6 — RULES CONNAISSANCE SCOPEE                          -->
+      <!-- ============================================================ -->
+      <section>
+        <h2>Rules — la connaissance scopee</h2>
+        <ul style="font-size: 0.85em;">
+          <li>📄 Fichier : <code>.claude/rules/[nom].md</code></li>
+          <li>🔄 Charge : auto si match <code>paths:</code></li>
+          <li>🎯 Contenu : ce que fait UN fichier / dossier</li>
+        </ul>
+<pre><code class="language-bash">.claude/rules/
+├── frontend.md     ← regles frontend globales
+├── backend.md      ← regles backend globales
+├── front/
+│   ├── hero.md     ← regle scopee a Hero.astro
+│   └── form.md     ← regle scopee a Form.tsx
+└── back/
+    └── contact-form.md</code></pre>
+
+        <aside class="notes">
+          Une rule = doc d'un fichier specifique.
+          Pas charge tout le temps. Seulement quand Claude touche au fichier.
+          C'est ton historique : "qu'est-ce que fait ce composant ? Pourquoi ?".
+          Comparer avec un Confluence ou Notion : c'est pareil mais a cote du code.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 7 — ANATOMIE D'UNE RULE                                -->
+      <!-- ============================================================ -->
+      <section>
+        <h2>Rule : exemple concret (Hero.astro)</h2>
+<pre><code class="language-markdown">---
+paths:
+  - "front/src/components/Hero.astro"
+---
+
+# Hero — composant LCP
+
+## Role
+Premiere section visible. Element LCP du Lighthouse.
+
+## Contraintes
+- &lt;Image&gt; Astro, loading="eager"
+- Texte CTA depuis front/.env (HERO_CTA)
+- Pas d'animation framer-motion (CLS)
+
+## Dependencies
+- HeroBackground.tsx
+- CTAButton.astro</code></pre>
+
+        <aside class="notes">
+          paths: c'est le scope. Sans paths:, charge tout le temps = pollution.
+          Sections classiques : Role / Contraintes / Dependencies.
+          Quand Claude touche Hero.astro, il sait pourquoi telle decision.
+          C'est tres utile pour onboarder un nouveau dev OU un nouvel agent.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 8 — SKILLS COMPETENCES WORKFLOW                        -->
+      <!-- ============================================================ -->
+      <section>
+        <h2>Skills — les competences workflow</h2>
+        <ul style="font-size: 0.85em;">
+          <li>📄 Fichier : <code>.claude/skills/[verbe]/SKILL.md</code></li>
+          <li>🔄 Charge : a la demande (trigger description)</li>
+          <li>🎯 Contenu : procedure repetable avec etapes</li>
+        </ul>
+        <p><strong>Skill = un VERBE.</strong></p>
+        <div class="card" style="font-family: 'Fira Code', monospace; font-size: 0.8em;">
+          /deploy-staging &nbsp;&nbsp;&nbsp;&nbsp; <span class="muted">→ deployer</span><br>
+          /audit-lcp &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="muted">→ auditer</span><br>
+          /clone-section &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="muted">→ cloner</span><br>
+          /generate-favicon &nbsp;&nbsp; <span class="muted">→ generer</span><br>
+          /scan-broken-links &nbsp; <span class="muted">→ scanner</span>
+        </div>
+        <p class="muted">"Je tape les memes etapes 3x ?" Cree un skill.</p>
+
+        <aside class="notes">
+          Skill = competence. Toujours un verbe.
+          Trigger : Claude detecte un mot-cle dans ta phrase → lance le skill.
+          C'est ce que vous allez creer cet apres-midi.
+          Faire lister des verbes que les participants tapent souvent.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 9 — 4 ELEMENTS D'UN BON SKILL                          -->
+      <!-- ============================================================ -->
+      <section>
+        <h2>Anatomie d'un bon skill</h2>
+        <div class="four-col" style="margin-bottom: 0.5em;">
+          <div class="card center">
+            <span class="pill pill-primary">①</span><br>
+            <strong>name</strong><br>
+            <span class="muted">Verbe kebab-case</span>
+          </div>
+          <div class="card center">
+            <span class="pill pill-primary">②</span><br>
+            <strong>description</strong><br>
+            <span class="muted">"Use when X, Y, Z"</span>
+          </div>
+          <div class="card center">
+            <span class="pill pill-primary">③</span><br>
+            <strong>etapes</strong><br>
+            <span class="muted">5-8 numerotees</span>
+          </div>
+          <div class="card center">
+            <span class="pill pill-primary">④</span><br>
+            <strong>sortie</strong><br>
+            <span class="muted">Livrable concret</span>
+          </div>
+        </div>
+<pre><code class="language-yaml">---
+name: audit-lcp
+description: Audit Lighthouse + propose 3 optimisations LCP.
+  Use when "audit perf", "verifier LCP", "optimiser performance".
+allowed-tools: Read Write Bash
+model: sonnet
+---
+
+1. cd front && npm run build → OK ?
+2. npm run preview & lighthouse → score
+3. Identifier 3 issues prioritaires
+4. Output : docs/audit-[date].md</code></pre>
+
+        <aside class="notes">
+          Description avec triggers explicites = c'est CRITIQUE.
+          Sans "Use when X, Y, Z", Claude ne sait pas quand lancer.
+          5-8 etapes max. 20 = decoupe en 2 skills.
+          Insister : les 4 elements sont OBLIGATOIRES pour leur skill cet aprem.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 10 — MCP                                               -->
+      <!-- ============================================================ -->
+      <section>
+        <h2>MCP — les outils externes</h2>
+        <p class="muted">MCP = Model Context Protocol</p>
+        <div class="two-col">
+          <div class="card card-soft">
+            <strong>Skill</strong><br>
+            <span class="muted">procedure (Claude suit etapes)</span>
+          </div>
+          <div class="card card-dark">
+            <strong>MCP</strong><br>
+            <span style="color: var(--color-indigo-100);">outil concret (Claude appelle fonction)</span>
+          </div>
+        </div>
+        <p style="margin-top: 0.5em;"><strong>Exemples installes :</strong></p>
+        <ul style="font-size: 0.8em;">
+          <li><code>mcp__claude_ai_supabase__*</code> — execute SQL, deploy edge function</li>
+          <li><code>mcp__playwright__*</code> — browser automation</li>
+          <li><code>mcp__webflow__*</code> — Designer + Data API</li>
+        </ul>
+        <p class="muted">Un skill peut UTILISER un MCP via <code>allowed-tools:</code></p>
+
+        <aside class="notes">
+          MCP c'est les outils dispos pour Claude (Supabase, Webflow, Playwright).
+          Comme des fonctions JS, mais cote serveur.
+          Tape `claude mcp list` dans ton terminal pour voir ce qui est dispo.
+          Demo possible : faire `claude mcp list` en live a la fin de la slide.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 11 — HOOKS                                             -->
+      <!-- ============================================================ -->
+      <section>
+        <h2>Hooks — l'enforcement deterministe</h2>
+        <p>Quand : une action <strong>DOIT</strong> s'executer (lint, audit).</p>
+        <div class="two-col">
+          <div class="card">
+            <strong>Skill</strong><br>
+            <span class="muted">Claude decide d'appeler (peut oublier)</span>
+          </div>
+          <div class="card card-soft">
+            <strong>Hook</strong><br>
+            <span class="muted">Le harness execute (oubli impossible)</span>
+          </div>
+        </div>
+<pre><code class="language-json">// .claude/settings.json
+{
+  "hooks": {
+    "PostToolUse": [{
+      "matcher": "Edit|Write",
+      "command": "cd front && npm run lint -- --fix"
+    }]
+  }
+}</code></pre>
+        <p class="muted">→ Apres CHAQUE Edit ou Write, lint se lance.</p>
+
+        <aside class="notes">
+          Hook = enforcement, garanti.
+          Skill : Claude peut oublier. Hook : c'est le systeme qui force.
+          Useful pour : lint apres edit, audit avant commit, format auto.
+          Slide courte (1 min), enchainer vite sur decision tree.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 12 — DECISION TREE                                     -->
+      <!-- ============================================================ -->
+      <section>
+        <h2>Le decision tree</h2>
+        <div class="decision-tree"><span class="q">Q1:</span> Procedure repetable avec etapes ?
+    <span class="yes">OUI</span> → <span class="mecanism">SKILL</span>  (.claude/skills/[verbe]/)
+    NON → Q2
+
+<span class="q">Q2:</span> Fait permanent toutes sessions ?
+    <span class="yes">OUI</span> → <span class="mecanism">CLAUDE.md</span> (&lt; 80 lignes)
+    NON → Q3
+
+<span class="q">Q3:</span> Fait specifique a UN fichier ?
+    <span class="yes">OUI</span> → <span class="mecanism">RULE</span> (.claude/rules/ avec paths:)
+    NON → Q4
+
+<span class="q">Q4:</span> Action qui DOIT s'executer ?
+    <span class="yes">OUI</span> → <span class="mecanism">HOOK</span> (settings.json)
+    NON → Q5
+
+<span class="q">Q5:</span> Outil / API externe ?
+    <span class="yes">OUI</span> → <span class="mecanism">MCP</span> (claude mcp add ...)
+    NON → Pas besoin d'ajouter de contexte</div>
+
+        <aside class="notes">
+          Vous avez UN doute ? Vous prenez ce tree.
+          C'est LA slide a photographier MAINTENANT avec votre tel.
+          On va l'appliquer sur des cas concrets a la slide suivante.
+          Laisser 30 sec de pause pour qu'ils sortent les tels.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 13 — CAS CONCRETS                                      -->
+      <!-- ============================================================ -->
+      <section>
+        <h2>Cas concrets — quel mecanisme ?</h2>
+        <table>
+          <thead>
+            <tr><th>Cas</th><th>Choix</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>"Resume ce que fait Hero.astro"</td><td><span class="pill pill-soft">Rule</span></td></tr>
+            <tr><td>"TypeScript strict partout"</td><td><span class="pill pill-soft">CLAUDE.md</span></td></tr>
+            <tr><td>"Deploy Netlify + Lighthouse"</td><td><span class="pill pill-soft">Skill</span></td></tr>
+            <tr><td>"Lint auto apres Edit"</td><td><span class="pill pill-soft">Hook</span></td></tr>
+            <tr><td>"Connecter a Supabase"</td><td><span class="pill pill-soft">MCP</span></td></tr>
+            <tr><td>"Convention naming kebab-case"</td><td><span class="pill pill-soft">CLAUDE.md</span></td></tr>
+            <tr><td>"Audit cross-browser"</td><td><span class="pill pill-soft">Skill</span></td></tr>
+            <tr><td>"Brief de la page Pricing"</td><td><span class="pill pill-soft">Rule</span></td></tr>
+          </tbody>
+        </table>
+        <p class="muted center" style="margin-top: 0.4em;">→ Vous trouvez l'intuition tres vite.</p>
+
+        <aside class="notes">
+          Question piege : "Audit cross-browser". Skill ou hook ?
+          Skill : tu l'appelles quand tu veux. Hook : ca se fait apres chaque edit.
+          Poser des questions, debattre.
+          Cap a 3 min de Q/R, sinon "on traite ca a 14h30 sur ton skill".
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 14 — MA METHODE DOCUMENTATION-FIRST ⭐                  -->
+      <!-- ============================================================ -->
+      <section class="slide-methodo">
+        <h2 style="color: var(--color-brand-primary);">Ma methode : Documentation-First</h2>
+        <div class="quote-big">
+          Je ne code RIEN avant d'avoir saoule Claude de contexte.
+        </div>
+        <p><strong>Le principe :</strong></p>
+        <ul>
+          <li>Plus Claude a de contexte &nbsp;→&nbsp; moins il hallucine</li>
+          <li>Plus Claude est cadre &nbsp;→&nbsp; moins de bugs</li>
+          <li>Plus c'est documente &nbsp;→&nbsp; plus c'est reproductible</li>
+        </ul>
+        <p style="margin-top: 0.6em;"><strong>Mon stack mental :</strong></p>
+        <p style="font-family: 'futura-pt', sans-serif; font-size: 0.9em;">
+          <span class="pill pill-soft">1. ENQUETER</span> &nbsp;→&nbsp;
+          <span class="pill pill-soft">2. CADRER</span> &nbsp;→&nbsp;
+          <span class="pill pill-soft">3. CAPITALISER</span> &nbsp;→&nbsp;
+          <span class="pill pill-primary">4. EXECUTER</span>
+        </p>
+
+        <aside class="notes">
+          Si vous retenez UN truc de la journee : ce slide.
+          Je ne lance JAMAIS un projet sans avoir saoule Claude de docs avant.
+          C'est exactement ce que vous avez fait ce matin : je vous ai donne le repo + docs + rules + skills. Resultat : vous avez code direct.
+          Sans ca : Claude invente, vous corrigez 50% du temps.
+          INSISTER : cette slide est la signature de ma methode.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 15 — PIPELINE EN PRATIQUE ⭐                            -->
+      <!-- ============================================================ -->
+      <section class="slide-methodo">
+        <h2 style="color: var(--color-brand-primary);">Le pipeline en pratique</h2>
+        <div class="four-col">
+          <div class="pipeline-step step-1">
+            <span class="step-num">①</span>
+            <span class="step-name">ENQUETER</span>
+            <span class="step-cmd">/doc-maker</span>
+            <span class="step-meta">5-10 docs en parallele<br>~10 min</span>
+          </div>
+          <div class="pipeline-step step-2">
+            <span class="step-num">②</span>
+            <span class="step-name">CADRER</span>
+            <span class="step-cmd">/cdc-maker</span>
+            <span class="step-meta">1 CDC + 20-30 taches<br>~15 min</span>
+          </div>
+          <div class="pipeline-step step-3">
+            <span class="step-num">③</span>
+            <span class="step-name">CAPITALISER</span>
+            <span class="step-cmd">/skill-maker</span>
+            <span class="step-meta">1 skill par workflow<br>~20-30 min</span>
+          </div>
+          <div class="pipeline-step step-4">
+            <span class="step-num">④</span>
+            <span class="step-name">EXECUTER</span>
+            <span class="step-cmd">Claude Code</span>
+            <span class="step-meta">Contexte riche<br>0 hallucination</span>
+          </div>
+        </div>
+        <div class="frame-primary center" style="margin-top: 0.6em;">
+          <strong>Sur ce projet de formation</strong> : 25 docs &nbsp;·&nbsp; 1 CDC &nbsp;·&nbsp; 6 skills
+        </div>
+        <p class="muted center" style="margin-top: 0.4em;">→ Le bug n'est plus Claude. C'est le brief.</p>
+
+        <aside class="notes">
+          Etape 1 : je lance 5-10 /doc-maker EN PARALLELE sur concurrents, stack, best practices, anti-patterns.
+          Etape 2 : avec ces docs, /cdc-maker structure un CDC en 15 min.
+          Etape 3 : je repere les workflows recurrents → 1 skill par workflow.
+          Etape 4 : la, Claude code avec TOUT le contexte. Resultat : 0 hallucination.
+          Question : "Combien de docs sur un nouveau projet client ? Devinez."
+          Reponse : "Moi je tape souvent 10-15 docs avant la premiere ligne de code."
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 16 — TOP 7 ANTI-PATTERNS                               -->
+      <!-- ============================================================ -->
+      <section>
+        <h2>Top 7 anti-patterns a fuir</h2>
+        <div class="antipattern">
+          <span class="cross">✗</span> CLAUDE.md &gt; 80 lignes
+          <span class="arrow">→</span> <span class="fix">Sortir le detail dans docs/</span>
+        </div>
+        <div class="antipattern">
+          <span class="cross">✗</span> Skill sans triggers explicites
+          <span class="arrow">→</span> <span class="fix">"Use when X, Y, Z"</span>
+        </div>
+        <div class="antipattern">
+          <span class="cross">✗</span> Rule sans <code>paths:</code>
+          <span class="arrow">→</span> <span class="fix">Toujours scoper</span>
+        </div>
+        <div class="antipattern">
+          <span class="cross">✗</span> Skill = "fait un truc avec X"
+          <span class="arrow">→</span> <span class="fix">1 verbe, 1 livrable</span>
+        </div>
+        <div class="antipattern">
+          <span class="cross">✗</span> Skill avec 20 etapes
+          <span class="arrow">→</span> <span class="fix">Decouper en 2 skills</span>
+        </div>
+        <div class="antipattern">
+          <span class="cross">✗</span> Hook sans confirmation
+          <span class="arrow">→</span> <span class="fix">Operations non destructives</span>
+        </div>
+        <div class="antipattern">
+          <span class="cross">✗</span> Secrets dans CLAUDE.md
+          <span class="arrow">→</span> <span class="fix">Variables d'env + .gitignore</span>
+        </div>
+
+        <aside class="notes">
+          Ce sont les 7 trucs qui cassent le truc.
+          Si vous en evitez 5 sur 7, vous etes deja meilleurs que 80% des devs Claude Code.
+          Slide rapide, on enchaine sur les demos.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 17 — TRANSITION DEMOS                                  -->
+      <!-- ============================================================ -->
+      <section>
+        <h2>On passe en live — mon pipeline en demo</h2>
+        <p>Vous allez VOIR les 3 etapes que je viens de decrire :</p>
+        <div class="three-col">
+          <div class="card center">
+            <span class="pill pill-primary">①</span><br>
+            <strong style="font-family: 'futura-pt', sans-serif;">/doc-maker</strong><br>
+            <span class="muted">ENQUETER</span><br><br>
+            <span class="muted" style="font-size: 0.7em;">Sujet propose par vous, libre. Claude genere 5+ docs en parallele avec web search.</span>
+          </div>
+          <div class="card center">
+            <span class="pill pill-primary">②</span><br>
+            <strong style="font-family: 'futura-pt', sans-serif;">/cdc-maker</strong><br>
+            <span class="muted">CADRER</span><br><br>
+            <span class="muted" style="font-size: 0.7em;">Sur le brief perso d'un participant. Voir le CDC structure + taches + dependances.</span>
+          </div>
+          <div class="card center">
+            <span class="pill pill-primary">③</span><br>
+            <strong style="font-family: 'futura-pt', sans-serif;">/rule-maker</strong><br>
+            <span class="muted">CAPITALISER</span><br><br>
+            <span class="muted" style="font-size: 0.7em;">Cible : composant Hero du projet. Voir une rule generee automatiquement.</span>
+          </div>
+        </div>
+        <p class="center" style="font-size: 1.1em; margin-top: 0.6em;">
+          <span style="color: var(--color-brand-primary);">→</span> A 14h30, vous attaquez <strong>VOTRE skill custom</strong>.
+        </p>
+
+        <aside class="notes">
+          Plus de slides. On bascule terminal.
+          On va voir le pipeline en LIVE, pas en concept.
+          Quelqu'un veut proposer un sujet pour /doc-maker ?
+          L'objectif : que vous voyiez que c'est REEL et REPRODUCTIBLE.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SLIDE 18 — RECAP ⭐                                           -->
+      <!-- ============================================================ -->
+      <section class="slide-recap">
+        <h2 style="color: var(--color-brand-primary); margin-bottom: 0.4em;">A retenir</h2>
+        <div class="frame">
+          <h3>Les 5 mecanismes</h3>
+          <ol>
+            <li><code>CLAUDE.md</code> = regles globales (&lt; 80 lignes)</li>
+            <li><code>Rule</code> = CE qu'est un fichier</li>
+            <li><code>Skill</code> = COMMENT faire un workflow</li>
+            <li><code>MCP</code> = outils externes</li>
+            <li><code>Hook</code> = garantir une action</li>
+          </ol>
+
+          <h3>Ma methode</h3>
+          <ol>
+            <li><code>/doc-maker</code> &nbsp;→&nbsp; enqueter (creer du contexte)</li>
+            <li><code>/cdc-maker</code> &nbsp;→&nbsp; cadrer (plan d'action)</li>
+            <li><code>/skill-maker</code> &nbsp;→&nbsp; capitaliser (workflows)</li>
+            <li>Coder &nbsp;→&nbsp; executer avec contexte riche</li>
+          </ol>
+        </div>
+        <p class="footer-note">
+          Votre skill cet apres-midi : <strong>1 verbe + 1 livrable + 5-8 etapes</strong>.<br>
+          Photographiez cette slide maintenant.
+        </p>
+
+        <aside class="notes">
+          Si vous repartez avec ces 9 lignes, la journee est gagnee.
+          Le top : 5 mecanismes (vocabulaire) + 4 etapes methodo (action).
+          Sortez vos tels, photo de la slide.
+          Pause de 5 min, on repart en mode hands-on sur VOTRE skill.
+        </aside>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- Reveal.js 5 core + plugins -->
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/notes/notes.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/highlight/highlight.js"></script>
+
+  <script>
+    Reveal.initialize({
+      hash: true,
+      slideNumber: 'c/t',
+      transition: 'slide',
+      transitionSpeed: 'default',
+      controls: true,
+      progress: true,
+      center: true,
+      touch: true,
+      width: 1280,
+      height: 800,
+      margin: 0.08,
+      minScale: 0.4,
+      maxScale: 1.6,
+      plugins: [ RevealNotes, RevealHighlight ]
+    });
+  </script>
+
+</body>
+</html>

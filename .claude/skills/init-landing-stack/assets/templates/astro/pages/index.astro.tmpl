@@ -1,0 +1,59 @@
+---
+import Base from '../layouts/Base.astro'
+import Hero from '../components/Hero.astro'
+import ContactForm from '../components/ContactForm.tsx'
+
+const title = '{{PROJECT_NAME}} — Votre promesse en 5 mots'
+const description = 'Description SEO 150-160 caracteres expliquant clairement le benefice utilisateur, les mots-cles principaux et l\'appel a l\'action.'
+---
+
+<Base title={title} description={description}>
+
+  <Hero
+    title="Votre promesse principale ici"
+    subtitle="Sous-titre qui explique le benefice utilisateur en 1 phrase claire."
+    ctaText="Commencer maintenant"
+    ctaHref="#contact"
+  />
+
+  <section id="features" class="py-16 sm:py-24">
+    <div class="container-narrow">
+      <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl text-center">
+        Pourquoi {{PROJECT_NAME}}
+      </h2>
+      <div class="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-3">
+        <div class="text-center">
+          <h3 class="text-lg font-semibold text-gray-900">Benefice 1</h3>
+          <p class="mt-2 text-sm text-gray-600">Description courte du benefice cle.</p>
+        </div>
+        <div class="text-center">
+          <h3 class="text-lg font-semibold text-gray-900">Benefice 2</h3>
+          <p class="mt-2 text-sm text-gray-600">Description courte du benefice cle.</p>
+        </div>
+        <div class="text-center">
+          <h3 class="text-lg font-semibold text-gray-900">Benefice 3</h3>
+          <p class="mt-2 text-sm text-gray-600">Description courte du benefice cle.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="bg-gray-50 py-16 sm:py-24">
+    <div class="container-narrow">
+      <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl text-center">
+        Contacte-nous
+      </h2>
+      <p class="mt-4 text-center text-gray-600">
+        Laisse ton email, on revient vers toi sous 24h.
+      </p>
+      <div class="mt-10 mx-auto max-w-md">
+        <ContactForm client:visible />
+      </div>
+    </div>
+  </section>
+
+  <footer class="border-t border-gray-200 py-8 text-center text-sm text-gray-500">
+    &copy; {new Date().getFullYear()} {{PROJECT_NAME}}. Tous droits reserves.
+  </footer>
+
+</Base>

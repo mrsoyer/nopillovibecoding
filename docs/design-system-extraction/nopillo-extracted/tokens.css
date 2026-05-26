@@ -1,0 +1,272 @@
+/* ===================================================================
+   Nopillo Design System — CSS Tokens
+   Extrait de https://www.nopillo.com/ le 2026-05-05
+   Methode : Playwright MCP + getComputedStyle()
+
+   USAGE :
+     - Importer dans :root du projet
+     - Adapter les noms si conflit avec systeme existant
+     - Voir _index.md pour la doc complete
+   =================================================================== */
+
+:root {
+  /* ===== BRAND COLORS ===== */
+  --color-brand-black:   #09090B;     /* Brand black (texte default, CTAs primary) */
+  --color-brand-white:   #FFFFFF;
+  --color-brand-primary: #4033DB;     /* Indigo-600, couleur de marque */
+  --color-brand-soft:    #DEDAFF;     /* Indigo-100, backgrounds soft */
+  --color-brand-mint:    #0CC28C;     /* Secondary-600, vert highlight */
+
+  /* ===== INDIGO SCALE (PRIMAIRE) ===== */
+  --color-indigo-5:   #FAFAFE;
+  --color-indigo-10:  #EEECFF;
+  --color-indigo-50:  #F6F5FD;
+  --color-indigo-100: #DEDAFF;        /* hero soft, borders */
+  --color-indigo-200: #BDB5FF;
+  --color-indigo-300: #9C90FF;
+  --color-indigo-400: #8275FF;
+  --color-indigo-500: #5747FF;        /* liens */
+  --color-indigo-600: #4033DB;        /* PRIMARY, CTA section */
+  --color-indigo-700: #2D23B7;        /* hover primary */
+  --color-indigo-800: #1E1693;
+  --color-indigo-900: #0F0167;        /* texte indigo profond */
+
+  /* ===== GRAYCOOL (NEUTRES) ===== */
+  --color-graycool-25:  #FCFCFD;
+  --color-graycool-50:  #F9F9FB;
+  --color-graycool-100: #EFF1F5;
+  --color-graycool-200: #DCDFEA;
+  --color-graycool-300: #B9C0D4;
+  --color-graycool-400: #7D89B0;
+  --color-graycool-500: #5D6B98;      /* texte muted */
+  --color-graycool-600: #4A5578;
+  --color-graycool-700: #404968;
+  --color-graycool-800: #30374F;
+  --color-graycool-900: #111322;
+
+  /* ===== SECONDARY (VERT MINT) ===== */
+  --color-secondary-10:  #EEFCF0;
+  --color-secondary-50:  #E4FFEA;
+  --color-secondary-100: #CEFDD8;
+  --color-secondary-200: #93FCBB;
+  --color-secondary-400: #48ED9B;
+  --color-secondary-600: #0CC28C;     /* highlight vert */
+
+  /* ===== EMERAUDE (VERT PROFOND) ===== */
+  --color-emeraude-300: #6DF6A4;
+  --color-emeraude-500: #11E28F;
+  --color-emeraude-800: #058376;
+  --color-emeraude-900: #036C6C;
+
+  /* ===== ORANGE (HEADBAND) ===== */
+  --color-orange-50:  #FFFBF5;
+  --color-orange-100: #FFF3DF;        /* headband bg default */
+  --color-orange-200: #FFE9C9;
+  --color-orange-600: #FFA057;
+
+  /* ===== NEUTRAL ===== */
+  --color-neutral-50:  #FAFAFA;
+  --color-neutral-100: #F5F5F5;
+  --color-neutral-200: #EBEBEB;
+  --color-neutral-500: #8E98AD;
+
+  /* ===== DANGER ===== */
+  --color-danger-50:  #FDEAED;
+  --color-danger-500: #DB3352;
+
+  /* ===== LANDING PAGE (LP) — SPECIAL ===== */
+  --color-lp-red:           #F45B69;
+  --color-lp-light-green:   #ADEFC5;
+  --color-lp-dark-green:    #186031;
+  --color-lp-light-purple:  #CDBDFF;
+  --color-lp-dark-purple:   #25245E;
+  --color-lp-orange:        #FFC192;
+  --color-lp-taupe:         #F6F7F2;
+
+  /* ===== TYPOGRAPHY — FAMILIES ===== */
+  --font-display: futura-pt, sans-serif;
+  --font-body:    "Futura PT", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-lp:      Splinesans, sans-serif;
+
+  /* ===== TYPOGRAPHY — SIZES ===== */
+  --text-xs:         12px;
+  --text-sm:         14px;
+  --text-base:       16px;
+  --text-lg:         18px;
+  --text-xl:         20px;
+  --text-2xl:        24px;
+  --text-3xl:        28px;
+  --text-4xl:        40px;
+  --text-display-sm: 48px;
+  --text-display-md: 56px;             /* H2 */
+  --text-display-lg: 60px;             /* H1 (~59.2px) */
+  --text-display-xl: 68px;
+
+  /* ===== TYPOGRAPHY — WEIGHTS ===== */
+  --font-regular: 400;
+  --font-medium:  500;
+  --font-demi:    600;
+  --font-bold:    700;
+
+  /* ===== TYPOGRAPHY — LINE HEIGHTS ===== */
+  --leading-tight:   1.14;             /* H2 */
+  --leading-snug:    1.22;             /* H1 */
+  --leading-normal:  1.5;              /* body */
+  --leading-relaxed: 1.6;              /* lead */
+
+  /* ===== SPACING ===== */
+  --space-0:  0;
+  --space-1:  4px;
+  --space-2:  8px;                     /* gap default */
+  --space-3:  12px;
+  --space-4:  16px;                    /* grid gap */
+  --space-5:  20px;
+  --space-6:  24px;                    /* card padding */
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;                    /* section padding-y */
+  --space-32: 128px;
+
+  /* ===== BORDER RADIUS ===== */
+  --radius-xs:     4px;
+  --radius-sm:     6px;
+  --radius-md:     8px;
+  --radius-lg:     16px;               /* CARDS DEFAULT */
+  --radius-xl:     24px;
+  --radius-2xl:    32px;
+  --radius-pill:   999px;              /* BUTTONS */
+  --radius-circle: 50%;
+
+  /* ===== SHADOWS ===== */
+  --shadow-card:     0 1px 10px rgba(0, 0, 0, 0.06);   /* CARD DEFAULT */
+  --shadow-elevated: 0 1px 16px rgba(0, 0, 0, 0.08);
+  --shadow-subtle:   0 1px 10px rgba(0, 0, 0, 0.05);
+
+  /* ===== CONTAINERS ===== */
+  --container-regular: 1120px;
+  --container-navbar:  1408px;
+
+  /* ===== TRANSITIONS ===== */
+  --transition-default: all 0.3s ease;
+  --transition-fast:    all 0.15s ease;
+
+  /* ===== Z-INDEX ===== */
+  --z-headband: 99;
+  --z-navbar:   100;
+  --z-modal:    1000;
+  --z-toast:    1100;
+}
+
+/* ===================================================================
+   Base typography
+   =================================================================== */
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: var(--font-regular);
+  line-height: var(--leading-normal);
+  color: var(--color-brand-black);
+}
+
+h1 {
+  font-family: var(--font-display);
+  font-size: var(--text-display-lg);
+  font-weight: var(--font-bold);
+  line-height: var(--leading-snug);
+  margin-bottom: var(--space-6);
+  color: var(--color-brand-black);
+}
+
+h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-display-md);
+  font-weight: var(--font-demi);
+  line-height: var(--leading-tight);
+  color: var(--color-brand-black);
+}
+
+h3 {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: var(--font-bold);
+  line-height: 1.08;
+  color: var(--color-brand-black);
+}
+
+p { margin: 0; }
+
+/* ===================================================================
+   Components base
+   =================================================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-5) var(--space-6);
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: var(--font-medium);
+  line-height: 1;
+  border-radius: var(--radius-pill);
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+.btn-primary {
+  background-color: var(--color-brand-black);
+  color: var(--color-brand-white);
+}
+
+.btn-secondary {
+  background-color: var(--color-indigo-600);
+  color: var(--color-brand-white);
+}
+
+.btn-outline {
+  background-color: var(--color-brand-white);
+  color: var(--color-brand-black);
+  border-color: var(--color-brand-black);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-6);
+  background-color: rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--color-indigo-100);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.container {
+  max-width: var(--container-regular);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+
+.section {
+  padding: var(--space-20) 0;
+}
+
+.section--soft {
+  background-color: rgba(222, 218, 255, 0.5);
+}
+
+.section--accent {
+  background-color: var(--color-indigo-100);
+}
+
+.section--cta {
+  background-color: var(--color-indigo-600);
+  color: var(--color-brand-white);
+}
+
+.section--cta h2 { color: var(--color-brand-white); }

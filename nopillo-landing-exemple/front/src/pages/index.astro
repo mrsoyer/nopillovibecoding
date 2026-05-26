@@ -1,0 +1,68 @@
+---
+import Base from '../layouts/Base.astro'
+import Header from '../components/Header.astro'
+import Footer from '../components/Footer.astro'
+import Hero from '../components/sections/Hero.astro'
+import StatsBar from '../components/sections/StatsBar.astro'
+import TrustBand from '../components/sections/TrustBand.astro'
+import ProblemSolution from '../components/sections/ProblemSolution.astro'
+import Simulator from '../components/sections/Simulator.tsx'
+import Testimonials from '../components/sections/Testimonials.astro'
+import Trustpilot from '../components/sections/Trustpilot.astro'
+import Glossaire from '../components/sections/Glossaire.astro'
+import FAQ from '../components/sections/FAQ.astro'
+import ContactForm from '../components/sections/ContactForm.tsx'
+import CtaFinal from '../components/sections/CtaFinal.astro'
+---
+<Base
+  title="Votre déclaration LMNP. Simplifiée. Optimisée. — Nopillo"
+  description="Liasse fiscale 2031 LMNP à 599 €/an. Économisez en moyenne 4 800 €/an. Expert-comptable certifié, accompagnement personnalisé, conformité garantie."
+>
+  <Header />
+
+  <main>
+    <Hero />
+    <StatsBar />
+    <TrustBand />
+    <ProblemSolution />
+
+    <section id="simulator" class="section section-white">
+      <div class="container-regular">
+        <div style="text-align: center; max-width: 720px; margin: 0 auto 48px;">
+          <span class="badge-eyebrow" style="margin-bottom: 16px;">Simulateur fiscal</span>
+          <h2 style="margin-bottom: 16px;">
+            Combien pouvez-vous <span style="color: var(--color-indigo-600);">économiser</span> ?
+          </h2>
+          <p style="font-size: 18px; color: var(--color-graycool-700); line-height: 1.6;">
+            Estimez votre gain fiscal en 30 secondes — sans inscription.
+          </p>
+        </div>
+        <Simulator client:visible />
+      </div>
+    </section>
+
+    <Testimonials />
+    <Trustpilot />
+    <Glossaire />
+
+    <section id="contact" class="section section-soft">
+      <div class="container-regular" style="max-width: 640px;">
+        <div style="text-align: center; margin-bottom: 32px;">
+          <span class="badge-eyebrow" style="margin-bottom: 16px;">Démarrer</span>
+          <h2 style="margin-bottom: 12px;">
+            Votre <span style="color: var(--color-indigo-600);">simulation gratuite</span>
+          </h2>
+          <p style="font-size: 17px; color: var(--color-graycool-700); line-height: 1.6;">
+            Un expert vous contacte sous 24h pour personnaliser votre cas.
+          </p>
+        </div>
+        <ContactForm client:visible />
+      </div>
+    </section>
+
+    <FAQ />
+    <CtaFinal />
+  </main>
+
+  <Footer />
+</Base>

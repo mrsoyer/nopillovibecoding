@@ -1,0 +1,184 @@
+---
+// Header — Navigation Nopillo
+// Sticky avec headband orange optionnel (annonces)
+// Source DS : .claude/skills/apply-nopillo-ds/references/components-anatomy.md
+
+import Button from './Button.astro';
+
+interface NavItem {
+  label: string;
+  url: string;
+}
+
+interface Props {
+  showHeadband?: boolean;
+  headbandText?: string;
+  headbandLinkUrl?: string;
+  variant?: 'light' | 'transparent';
+  logoUrl?: string;
+  ctaLabel?: string;
+  ctaUrl?: string;
+  navItems?: NavItem[];
+}
+
+const {
+  showHeadband = false,
+  headbandText = '',
+  headbandLinkUrl = '#',
+  variant = 'light',
+  logoUrl = '/logo-nopillo.svg',
+  ctaLabel = 'Calculer mes économies',
+  ctaUrl = '/contact',
+  navItems = [],
+} = Astro.props;
+---
+
+<header class:list={['header', `header-${variant}`]}>
+  {showHeadband && (
+    <a href={headbandLinkUrl} class="headband">
+      <span>{headbandText}</span>
+    </a>
+  )}
+
+  <nav class="nav">
+    <div class="container">
+      <a href="/" class="logo" aria-label="Nopillo accueil">
+        <img src={logoUrl} alt="Nopillo" />
+      </a>
+
+      {navItems.length > 0 && (
+        <ul class="nav-items">
+          {navItems.map((item) => (
+            <li><a href={item.url}>{item.label}</a></li>
+          ))}
+        </ul>
+      )}
+
+      <div class="cta-group">
+        <Button variant="outline" size="sm" href="/login">Espace client</Button>
+        <Button variant="primary" size="sm" href={ctaUrl}>{ctaLabel}</Button>
+      </div>
+
+      <button class="burger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    width: 100%;
+  }
+
+  .header-light {
+    background-color: var(--white);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+  }
+
+  .header-transparent {
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .headband {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--orange-100, #FFF3DF);
+    color: var(--black);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 8px 16px;
+    text-decoration: none;
+    min-height: 36px;
+  }
+
+  .headband:hover {
+    background-color: var(--orange-200, #FFE9C9);
+  }
+
+  .nav {
+    height: 64px;
+  }
+
+  @media (min-width: 1024px) {
+    .nav { height: 80px; }
+  }
+
+  .nav .container {
+    max-width: 1408px;
+    margin: 0 auto;
+    padding: 0 16px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .logo img {
+    height: 32px;
+    display: block;
+  }
+
+  .nav-items {
+    display: none;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 32px;
+    flex: 1;
+    justify-content: center;
+  }
+
+  @media (min-width: 1024px) {
+    .nav-items { display: flex; }
+  }
+
+  .nav-items a {
+    color: var(--black);
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .nav-items a:hover {
+    color: var(--indigo-600);
+  }
+
+  .cta-group {
+    display: none;
+    gap: 8px;
+  }
+
+  @media (min-width: 768px) {
+    .cta-group { display: flex; }
+  }
+
+  .burger {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+  }
+
+  @media (min-width: 768px) {
+    .burger { display: none; }
+  }
+
+  .burger span {
+    width: 20px;
+    height: 2px;
+    background-color: var(--black);
+  }
+</style>

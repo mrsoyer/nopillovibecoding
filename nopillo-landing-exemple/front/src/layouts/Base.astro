@@ -1,0 +1,69 @@
+---
+import '../styles/global.css'
+
+interface Props {
+  title: string
+  description: string
+  ogImage?: string
+}
+
+const { title, description, ogImage = '/og.png' } = Astro.props
+const GTM_ID = import.meta.env.PUBLIC_GTM_ID || 'GTM-XXXXXX'
+const GA4_ID = import.meta.env.PUBLIC_GA4_MEASUREMENT_ID || 'G-XXXXXXXXXX'
+---
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <!-- noindex : page paid only, pas de SEO -->
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:type" content="website" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Adobe Typekit — Futura PT (kit Nopillo authentique) -->
+    <link rel="preconnect" href="https://use.typekit.net" crossorigin />
+    <link rel="preconnect" href="https://p.typekit.net" crossorigin />
+    <link rel="stylesheet" href="https://use.typekit.net/c1b0b72bff15bb9715f23b2ce31c51654439d865.css" />
+
+    <!-- Consent Mode v2 : denied par defaut -->
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        analytics_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        wait_for_update: 500,
+      });
+    </script>
+
+    <!-- GTM head -->
+    <script is:inline define:vars={{ GTM_ID }}>
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer',GTM_ID);
+    </script>
+  </head>
+  <body class="min-h-screen bg-white text-zinc-900 antialiased">
+    <!-- GTM noscript -->
+    <noscript>
+      <iframe src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+        height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+
+    <slot />
+  </body>
+</html>

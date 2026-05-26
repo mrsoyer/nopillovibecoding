@@ -1,0 +1,183 @@
+---
+// Hero — Section hero Nopillo
+// Layout 2 colonnes desktop / stack mobile
+// Source DS : .claude/skills/apply-nopillo-ds/references/components-anatomy.md
+
+import Button from './Button.astro';
+
+interface Props {
+  badge?: string;
+  headline: string;
+  subheadline?: string;
+  ctaPrimaryLabel?: string;
+  ctaPrimaryUrl?: string;
+  ctaSecondaryLabel?: string;
+  ctaSecondaryUrl?: string;
+  trustpilotScore?: string;
+  trustpilotCount?: string;
+}
+
+const {
+  badge,
+  headline,
+  subheadline,
+  ctaPrimaryLabel = 'Calculer mes économies',
+  ctaPrimaryUrl = '/simulateur',
+  ctaSecondaryLabel,
+  ctaSecondaryUrl,
+  trustpilotScore,
+  trustpilotCount,
+} = Astro.props;
+---
+
+<section class="hero">
+  <div class="container">
+    <div class="grid">
+      <div class="content">
+        {badge && <span class="badge">{badge}</span>}
+
+        <h1>{headline}</h1>
+
+        {subheadline && <p class="subheadline">{subheadline}</p>}
+
+        <div class="cta-group">
+          <Button variant="primary" size="lg" href={ctaPrimaryUrl}>
+            {ctaPrimaryLabel}
+          </Button>
+          {ctaSecondaryLabel && ctaSecondaryUrl && (
+            <Button variant="ghost" size="lg" href={ctaSecondaryUrl}>
+              {ctaSecondaryLabel}
+            </Button>
+          )}
+        </div>
+
+        {trustpilotScore && (
+          <div class="trust">
+            <span class="trust-stars">★★★★★</span>
+            <span class="trust-text">
+              <strong>{trustpilotScore}/5</strong>
+              {trustpilotCount && ` sur ${trustpilotCount} avis vérifiés`}
+            </span>
+          </div>
+        )}
+      </div>
+
+      <div class="visual">
+        <slot name="visual">
+          <div class="visual-placeholder">
+            {/* Slot par défaut : à remplacer par image ou simulateur */}
+          </div>
+        </slot>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    background-color: rgba(222, 218, 255, 0.6); /* --indigo-100 60% */
+    padding: 96px 0 64px;
+    font-family: var(--font-body);
+  }
+
+  @media (min-width: 1024px) {
+    .hero {
+      padding: 160px 0 44px;
+    }
+  }
+
+  .hero .container {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 48px;
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    .grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+    }
+  }
+
+  .badge {
+    display: inline-block;
+    background-color: var(--white);
+    color: var(--indigo-600);
+    border: 1px solid var(--indigo-100, #DEDAFF);
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 24px;
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--black);
+    margin: 0 0 24px;
+  }
+
+  @media (min-width: 768px) {
+    h1 { font-size: 48px; }
+  }
+
+  @media (min-width: 1024px) {
+    h1 { font-size: 60px; line-height: 72px; }
+  }
+
+  .subheadline {
+    font-family: var(--font-body);
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--graycool500, #5D6B98);
+    margin: 0 0 32px;
+    max-width: 540px;
+  }
+
+  @media (min-width: 1024px) {
+    .subheadline { font-size: 20px; }
+  }
+
+  .cta-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .trust {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    color: var(--graycool500, #5D6B98);
+  }
+
+  .trust-stars {
+    color: #FFC107;
+    font-size: 18px;
+  }
+
+  .trust-text strong {
+    color: var(--black);
+  }
+
+  .visual-placeholder {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background-color: var(--white);
+    border-radius: 16px;
+    border: 1px solid var(--indigo-100, #DEDAFF);
+    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.06);
+  }
+</style>

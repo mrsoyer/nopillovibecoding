@@ -1,0 +1,87 @@
+{
+  "name": "init-landing-stack",
+  "version": "1.0.0-mvp",
+  "description": "Evals for the init-landing-stack skill MVP",
+  "cases": [
+    {
+      "id": "happy-path-astro",
+      "description": "Bootstrap complet avec tous les defaults : Astro, Supabase nouveau, Netlify auto, Git GitHub",
+      "input": {
+        "args": "ma-landing lead-gen",
+        "interview": {
+          "Q1": "ma-landing",
+          "Q2": "lead-gen",
+          "Q3": "nouveau",
+          "Q4": "eu-west-1",
+          "Q5": "auto",
+          "Q6": "GitHub"
+        }
+      },
+      "expected": {
+        "files_created": [
+          "front/package.json",
+          "front/astro.config.mjs",
+          "front/src/pages/index.astro",
+          "front/src/components/Hero.astro",
+          "front/src/components/ContactForm.tsx",
+          "front/src/lib/supabase.ts",
+          "supabase/config.toml",
+          "supabase/migrations/*_create_leads.sql",
+          "supabase/functions/contact-form/index.ts",
+          "CLAUDE.md",
+          "netlify.toml",
+          ".claude/rules/frontend.md",
+          ".claude/rules/backend.md",
+          ".claude/rules/claude-md.md"
+        ],
+        "checks": {
+          "CLAUDE.md_lines": "< 80",
+          "supabase_migration_applied": true,
+          "edge_function_deployed": true,
+          "netlify_site_live": true,
+          "form_submission_test": "ok:true",
+          "lead_inserted_in_db": ">= 1"
+        }
+      }
+    },
+    {
+      "id": "supabase-existant",
+      "description": "Bootstrap en linkant a un projet Supabase existant",
+      "input": {
+        "args": "",
+        "interview": {
+          "Q1": "landing-existing-sb",
+          "Q2": "produit",
+          "Q3": "existant",
+          "Q3b": "abcdefghij1234567890",
+          "Q5": "auto",
+          "Q6": "aucun"
+        }
+      },
+      "expected": {
+        "supabase_link_called": true,
+        "supabase_create_called": false,
+        "files_created": ["front/package.json", "supabase/config.toml"],
+        "checks": {
+          "Q4_skipped": true,
+          "git_remote": "none"
+        }
+      }
+    },
+    {
+      "id": "error-node-too-old",
+      "description": "Detection Node < 22 doit STOP avec message clair",
+      "input": {
+        "args": "test",
+        "env": {
+          "node_version": "v18.20.0"
+        }
+      },
+      "expected": {
+        "result": "STOP",
+        "error_message_contains": "Node 22+",
+        "no_files_created": true
+      }
+    }
+  ]
+}

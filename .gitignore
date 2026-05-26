@@ -1,0 +1,66 @@
+# === Secrets (CRITIQUE - jamais commit) ===
+.env
+.env.local
+.env.*.local
+**/.env
+**/.env.local
+**/.env.*.local
+# On garde .env.example (template public)
+!**/.env.example
+
+# === Dependencies ===
+node_modules/
+**/node_modules/
+
+# === Build outputs ===
+**/dist/
+**/build/
+**/.astro/
+**/.next/
+**/.svelte-kit/
+**/.output/
+
+# === Lockfiles trop volumineux (optionnel - on garde le 1er niveau) ===
+# package-lock.json garde au cas ou
+
+# === Cache & temp ===
+**/.cache/
+**/.netlify/
+**/.vercel/
+**/supabase/.temp/
+**/supabase/.branches/
+
+# === Logs ===
+*.log
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+**/pnpm-debug.log*
+
+# === OS ===
+.DS_Store
+Thumbs.db
+**/.DS_Store
+
+# === IDE local state ===
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# === Tests ===
+coverage/
+**/coverage/
+.nyc_output/
+test-results/
+playwright-report/
+
+# === Playwright MCP artefacts ===
+.playwright-mcp/
+
+# === Claude backups ===
+.claude/backups/
+
+# === Bundle analyse output ===
+*.stats.json
+*.html.gz

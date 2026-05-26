@@ -1,0 +1,100 @@
+{
+  "name": "student-setup",
+  "version": "1.0.0",
+  "description": "Eval cases pour le skill student-setup",
+  "cases": [
+    {
+      "id": "mac-fresh-install",
+      "description": "Mac avec rien d'installe : Node, Netlify, Supabase tous manquants",
+      "input": {
+        "os": "Darwin",
+        "preinstalled": [],
+        "expected_questions": [
+          "brew ou nvm pour Node ?",
+          "URL GitHub du repo ?",
+          "Supabase project ref ?",
+          "Supabase URL ?",
+          "Supabase anon key ?",
+          "Database password ?"
+        ]
+      },
+      "expected": {
+        "phases_completed": [0, 1, 2, 3, 4, 5, 6, 7],
+        "installs": ["node", "git", "netlify-cli", "supabase"],
+        "deploys": ["contact-form", "hubspot-form-submit"],
+        "final_check": {
+          "url": "http://localhost:4321/",
+          "http_status": 200
+        },
+        "duration_minutes": "20-30"
+      }
+    },
+    {
+      "id": "windows-partial",
+      "description": "Windows avec Node + Git deja installes, manque CLIs cloud",
+      "input": {
+        "os": "Windows",
+        "preinstalled": ["node-22", "git-2.45", "npm-10"],
+        "missing": ["netlify-cli", "supabase"],
+        "scoop_installed": false
+      },
+      "expected": {
+        "phases_skipped": [],
+        "scoop_install_proposed": true,
+        "installs": ["netlify-cli", "supabase"],
+        "final_check": {
+          "http_status": 200
+        }
+      }
+    },
+    {
+      "id": "already-cloned-fully-setup",
+      "description": "Repo deja clone, CLIs OK, juste besoin de configurer .env et lancer dev",
+      "input": {
+        "os": "Darwin",
+        "in_repo": true,
+        "preinstalled": ["node-24", "git", "netlify-cli-17", "supabase-2.101"],
+        "auth_done": ["netlify", "supabase"]
+      },
+      "expected": {
+        "phases_skipped": [1, 2, 3, 4],
+        "starts_at_phase": 5,
+        "credentials_collected": true,
+        "duration_minutes": "5-10"
+      }
+    },
+    {
+      "id": "error-port-4321-occupied",
+      "description": "Tout setup OK mais EADDRINUSE au npm run dev (autre projet tourne)",
+      "input": {
+        "os": "Darwin",
+        "all_setup_done": true,
+        "port_4321_occupied_by": "other-astro-project"
+      },
+      "expected": {
+        "error_detected": "EADDRINUSE",
+        "options_proposed": ["kill_process", "use_port_4322"],
+        "asks_user_choice": true,
+        "retry_after_choice": true,
+        "final_check": {
+          "http_status": 200
+        }
+      }
+    },
+    {
+      "id": "error-supabase-docker",
+      "description": "Supabase CLI 2.15 sans Docker, deploy edge function echoue",
+      "input": {
+        "os": "Darwin",
+        "supabase_version": "2.15.8",
+        "docker_running": false
+      },
+      "expected": {
+        "error_detected": "Cannot connect to the Docker daemon",
+        "fix_proposed": "brew upgrade supabase",
+        "retry_after_upgrade": true,
+        "final_supabase_version_min": "2.45.0"
+      }
+    }
+  ]
+}

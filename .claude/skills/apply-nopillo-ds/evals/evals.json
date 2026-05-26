@@ -1,0 +1,105 @@
+{
+  "name": "apply-nopillo-ds",
+  "version": "2.0.0",
+  "description": "Eval cases for apply-nopillo-ds (Astro-only)",
+  "cases": [
+    {
+      "id": "happy-path-init-landing-stack",
+      "description": "Project Astro fresh from /init-landing-stack with Tailwind, no existing tokens.css",
+      "trigger": "applique le DS Nopillo à mon projet Astro",
+      "context": {
+        "front_astro_config": true,
+        "tailwind_installed": true,
+        "existing_tokens": false,
+        "layout": "Base.astro"
+      },
+      "expected": {
+        "files_created": [
+          "front/src/styles/tokens.css",
+          "front/tailwind.nopillo.preset.mjs",
+          "front/src/components/nopillo/Button.astro",
+          "front/src/components/nopillo/Header.astro",
+          "front/src/components/nopillo/Footer.astro",
+          "front/src/components/nopillo/Hero.astro",
+          "front/src/components/nopillo/Card.astro",
+          "front/src/components/nopillo/CtaSection.astro",
+          "front/public/logo-nopillo.svg"
+        ],
+        "files_modified": [
+          "front/src/layouts/Base.astro",
+          "front/tailwind.config.mjs"
+        ],
+        "dev_server_starts": true,
+        "duration_seconds_max": 60
+      }
+    },
+    {
+      "id": "conflict-existing-tokens",
+      "description": "Project has existing src/styles/tokens.css — skill must ask before overriding",
+      "trigger": "ajoute le DS Nopillo",
+      "context": {
+        "front_astro_config": true,
+        "tailwind_installed": true,
+        "existing_tokens": true,
+        "layout": "Base.astro"
+      },
+      "expected": {
+        "user_prompt_shown": true,
+        "options_proposed": ["override", "merge", "skip"],
+        "files_created_default": []
+      }
+    },
+    {
+      "id": "no-tailwind",
+      "description": "Astro project without Tailwind — preset phase skipped with warning",
+      "trigger": "génère les composants Nopillo en Astro",
+      "context": {
+        "front_astro_config": true,
+        "tailwind_installed": false,
+        "existing_tokens": false
+      },
+      "expected": {
+        "warning_shown": "Tailwind non détecté",
+        "phase_3_skipped": true,
+        "files_created": [
+          "front/src/styles/tokens.css",
+          "front/src/components/nopillo/Button.astro",
+          "front/src/components/nopillo/Header.astro",
+          "front/src/components/nopillo/Footer.astro",
+          "front/src/components/nopillo/Hero.astro",
+          "front/src/components/nopillo/Card.astro",
+          "front/src/components/nopillo/CtaSection.astro"
+        ]
+      }
+    },
+    {
+      "id": "no-astro-project",
+      "description": "Working directory is not an Astro project — skill aborts cleanly",
+      "trigger": "applique le DS Nopillo",
+      "context": {
+        "front_astro_config": false,
+        "astro_config_root": false
+      },
+      "expected": {
+        "error_message": "Projet Astro non détecté",
+        "files_created": [],
+        "exit_clean": true
+      }
+    },
+    {
+      "id": "harmonise-existing-project",
+      "description": "Apply DS to an existing Astro project with multiple pages already built",
+      "trigger": "harmonise mon projet au DS Nopillo",
+      "context": {
+        "front_astro_config": true,
+        "tailwind_installed": true,
+        "existing_pages": ["index.astro", "about.astro", "contact.astro"]
+      },
+      "expected": {
+        "no_existing_pages_modified": true,
+        "files_created_under_nopillo_subfolder": true,
+        "user_can_choose_to_use_components": true
+      }
+    }
+  ]
+}

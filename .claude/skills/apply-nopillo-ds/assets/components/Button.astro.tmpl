@@ -1,0 +1,100 @@
+---
+// Button — Composant atomique Nopillo
+// Variants : primary | secondary | outline | ghost
+// Sizes    : sm | md | lg
+// Source DS : .claude/skills/apply-nopillo-ds/references/components-anatomy.md
+
+interface Props {
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+  href?: string;
+  type?: 'button' | 'submit' | 'reset';
+  disabled?: boolean;
+  class?: string;
+}
+
+const {
+  variant = 'primary',
+  size = 'md',
+  href,
+  type = 'button',
+  disabled = false,
+  class: className = '',
+} = Astro.props;
+
+const Tag = href ? 'a' : 'button';
+const variantClass = `btn-${variant}`;
+const sizeClass = `btn-${size}`;
+---
+
+<Tag
+  href={href}
+  type={!href ? type : undefined}
+  disabled={disabled}
+  class={`btn ${variantClass} ${sizeClass} ${className}`}
+>
+  <slot />
+</Tag>
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: var(--font-display);
+    font-weight: 500;
+    line-height: 1;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Sizes */
+  .btn-sm { padding: 10px 16px; font-size: 16px; }
+  .btn-md { padding: 20px 24px; font-size: 18px; }
+  .btn-lg { padding: 26px 48px; font-size: 18px; }
+
+  /* Variants */
+  .btn-primary {
+    background-color: var(--black);
+    color: var(--white);
+  }
+  .btn-primary:hover:not(:disabled) {
+    background-color: var(--graycool800, #30374F);
+  }
+
+  .btn-secondary {
+    background-color: var(--indigo-600);
+    color: var(--white);
+  }
+  .btn-secondary:hover:not(:disabled) {
+    background-color: var(--indigo-700, #2D23B7);
+  }
+
+  .btn-outline {
+    background-color: var(--white);
+    color: var(--black);
+    border-color: var(--black);
+  }
+  .btn-outline:hover:not(:disabled) {
+    background-color: var(--black);
+    color: var(--white);
+  }
+
+  .btn-ghost {
+    background-color: transparent;
+    color: var(--black);
+  }
+  .btn-ghost:hover:not(:disabled) {
+    background-color: var(--indigo-10, #EEECFF);
+  }
+</style>

@@ -1,0 +1,39 @@
+# CLAUDE.md — {{PROJECT_NAME}}
+
+## Regle MCP critique
+- Ne JAMAIS exposer SUPABASE_SERVICE_ROLE_KEY cote client.
+- Utiliser mcp__claude_ai_supabase__* pour migrations et deploys (jamais SQL direct prod).
+
+## Stack
+- Frontend : Astro 6 + Tailwind 4 + TypeScript strict
+- Backend : Supabase (Postgres + Edge Functions Deno)
+- Infra : Netlify ({{NL_SITE_URL}})
+- Code landing dans `front/`, edge functions dans `supabase/functions/`
+
+## Conventions
+- Composants `.astro` pour statique, `.tsx` (React) pour islands interactifs
+- Form handlers : passer par Edge Function `contact-form`, jamais Postgres direct cote client
+- Images : `<Image>` d'Astro, jamais `<img>` brut
+- Hydratation : `client:visible` par defaut, `client:load` uniquement si necessaire (au-dessus de la fold)
+- Variables d'env client : prefixe `PUBLIC_*` (Astro standard)
+
+## Commandes utiles
+- `cd front && npm run dev` — dev local (port 4321)
+- `cd front && npm run build && npm run preview` — test du build
+- `supabase functions serve contact-form` — Edge Function en local
+- `npx lighthouse http://localhost:4321 --view` — audit perf
+- `netlify deploy --prod` — deploy prod (auto sur push si Git connecte)
+
+## Cibles de perf
+- Lighthouse Performance >= 95
+- LCP < 1.5s, CLS < 0.1, INP < 200ms
+- Bundle JS client < 50 KB
+
+## Documentation
+- @docs/ : docs du projet
+- Skill `context-guardian` dans `.claude/skills/` : verifie la sante du contexte
+- `.claude/rules/` : regles path-scoped (frontend, backend, claude-md)
+
+## Regle MCP critique (rappel)
+- Ne JAMAIS exposer SUPABASE_SERVICE_ROLE_KEY cote client.
+- Toujours utiliser les MCP Supabase plutot que SQL direct.

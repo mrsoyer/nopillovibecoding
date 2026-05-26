@@ -1,0 +1,40 @@
+---
+paths:
+  - "supabase/**"
+---
+
+# Regles backend — {{PROJECT_NAME}}
+
+## Stack
+Supabase (Postgres + Edge Functions Deno).
+
+## Migrations
+- 1 migration = 1 fichier datestampe `<YYYYMMDDHHMMSS>_<description>.sql`.
+- Toujours `CREATE TABLE IF NOT EXISTS` pour idempotence.
+- RLS active par defaut sur toute nouvelle table : `ALTER TABLE ... ENABLE ROW LEVEL SECURITY`.
+- Aucune policy publique sans justification ecrite en commentaire.
+- Appliquer via MCP `mcp__claude_ai_supabase__apply_migration`, JAMAIS `psql` direct sur prod.
+
+## Edge Functions
+- Runtime Deno, imports via `jsr:` ou `npm:`.
+- Validation des inputs systematique (email regex, types, longueurs).
+- CORS restreint a la liste `ALLOWED_ORIGINS` — JAMAIS `*` en production.
+- Honeypot anti-spam sur les endpoints publics.
+- Logs `console.error` pour les erreurs, jamais throw sans context.
+- Cible < 5s d'execution. Si plus long : sortir vers background worker.
+
+## Secrets
+- `SUPABASE_SERVICE_ROLE_KEY` uniquement cote Edge Function via `Deno.env.get()`.
+- JAMAIS dans le bundle client (Astro `import.meta.env.PUBLIC_*` reserve a l'anon key).
+- Secrets custom via `supabase secrets set KEY=value`.
+
+## RPC functions (SQL)
+- Schema `public` par defaut, prefixe nom : `get_*`, `set_*`, `delete_*`.
+- `SECURITY DEFINER` uniquement si necessaire et justifie (commentaire SQL).
+- Acces autorise via RLS, pas via `GRANT`.
+
+## A ne pas faire
+- Pas de `SELECT *` en RPC publique (over-fetching).
+- Pas d'open CORS `*` en production.
+- Pas de `service_role_key` dans le code client / dans les logs.
+- Pas de migration ALTER TABLE sans backup mental (penser au rollback).

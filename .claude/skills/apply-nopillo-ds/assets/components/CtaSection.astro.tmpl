@@ -1,0 +1,136 @@
+---
+// CtaSection — Section CTA finale Nopillo
+// Variants : brand (indigo) | neutral (gray) | inverse (black)
+// Position type : juste avant <Footer />
+// Source DS : .claude/skills/apply-nopillo-ds/references/components-anatomy.md
+
+import Button from './Button.astro';
+
+interface Props {
+  variant?: 'brand' | 'neutral' | 'inverse';
+  headline: string;
+  subheadline?: string;
+  ctaPrimaryLabel: string;
+  ctaPrimaryUrl: string;
+  ctaSecondaryLabel?: string;
+  ctaSecondaryUrl?: string;
+}
+
+const {
+  variant = 'brand',
+  headline,
+  subheadline,
+  ctaPrimaryLabel,
+  ctaPrimaryUrl,
+  ctaSecondaryLabel,
+  ctaSecondaryUrl,
+} = Astro.props;
+
+// Mapping variant → button variant pour rester lisible sur le bg
+const primaryBtnVariant = variant === 'brand' ? 'outline' : variant === 'inverse' ? 'secondary' : 'primary';
+---
+
+<section class:list={['cta-section', `cta-section-${variant}`]}>
+  <div class="container">
+    <div class="layout">
+      <div class="content">
+        <h2>{headline}</h2>
+        {subheadline && <p class="subheadline">{subheadline}</p>}
+      </div>
+
+      <div class="actions">
+        <Button variant={primaryBtnVariant} size="lg" href={ctaPrimaryUrl}>
+          {ctaPrimaryLabel}
+        </Button>
+        {ctaSecondaryLabel && ctaSecondaryUrl && (
+          <Button variant="ghost" size="lg" href={ctaSecondaryUrl}>
+            {ctaSecondaryLabel}
+          </Button>
+        )}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-section {
+    padding: 64px 16px;
+    font-family: var(--font-body);
+  }
+
+  @media (min-width: 1024px) {
+    .cta-section { padding: 80px 24px; }
+  }
+
+  .cta-section .container {
+    max-width: 1120px;
+    margin: 0 auto;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    .layout {
+      grid-template-columns: 1.5fr 1fr;
+      gap: 48px;
+    }
+  }
+
+  h2 {
+    font-family: var(--font-display);
+    font-size: 36px;
+    font-weight: 600;
+    line-height: 1.14;
+    margin: 0 0 16px;
+  }
+
+  @media (min-width: 1024px) {
+    h2 { font-size: 56px; }
+  }
+
+  .subheadline {
+    font-size: 18px;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  @media (min-width: 1024px) {
+    .subheadline { font-size: 20px; }
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: flex-start;
+  }
+
+  @media (min-width: 1024px) {
+    .actions { justify-content: flex-end; }
+  }
+
+  /* Variants */
+  .cta-section-brand {
+    background-color: var(--indigo-600);
+    color: var(--white);
+  }
+  .cta-section-brand h2 { color: var(--white); }
+  .cta-section-brand .subheadline { color: rgba(255, 255, 255, 0.9); }
+
+  .cta-section-neutral {
+    background-color: var(--graycool50, #F9F9FB);
+    color: var(--black);
+  }
+
+  .cta-section-inverse {
+    background-color: var(--black);
+    color: var(--white);
+  }
+  .cta-section-inverse h2 { color: var(--white); }
+  .cta-section-inverse .subheadline { color: rgba(255, 255, 255, 0.7); }
+</style>

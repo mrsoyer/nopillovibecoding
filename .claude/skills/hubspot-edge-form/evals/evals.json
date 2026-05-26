@@ -1,0 +1,78 @@
+{
+  "name": "hubspot-edge-form",
+  "version": "1.0.0",
+  "description": "Eval cases pour hubspot-edge-form skill",
+  "cases": [
+    {
+      "id": "happy-path-url-eu",
+      "description": "URL HubSpot EU complete, form simple avec email + dropdown",
+      "input": {
+        "args": "https://app-eu1.hubspot.com/forms/26173790/new-editor/107536bf-c2cb-44de-89ea-8c3101f83870",
+        "supabase_project_ref_detected": "kamazblxybkukpkvznkv"
+      },
+      "expected": {
+        "parsed_portal": "26173790",
+        "parsed_form": "107536bf-c2cb-44de-89ea-8c3101f83870",
+        "parsed_region": "eu1",
+        "fields_detected": [
+          "email",
+          "maturite_du_projet",
+          "date_du_projet_estime",
+          "type_de_projet_envisage"
+        ],
+        "files_created": [
+          "supabase/functions/{slug}/index.ts",
+          "supabase/functions/{slug}/README.md"
+        ],
+        "deploy_success": true,
+        "test_submission_status": 200,
+        "test_response_ok": true,
+        "recap_includes": [
+          "endpoint URL",
+          "HubSpot performance dashboard URL",
+          "vanilla JS snippet",
+          "React hook snippet"
+        ]
+      }
+    },
+    {
+      "id": "no-arg-interview",
+      "description": "Sans argument : interview interactif portal/formId",
+      "input": {
+        "args": "",
+        "interview": {
+          "portalId": "12345678",
+          "formId": "abcd1234-5678-90ab-cdef-1234567890ab",
+          "region": "us"
+        }
+      },
+      "expected": {
+        "uses_interview": true,
+        "fetch_endpoint": "https://api.hsforms.com/embed/v4/render-definition/12345678/abcd1234-5678-90ab-cdef-1234567890ab"
+      }
+    },
+    {
+      "id": "url-invalid-fallback",
+      "description": "URL malformee : fallback sur interview",
+      "input": {
+        "args": "https://random-site.com/forms/abc"
+      },
+      "expected": {
+        "url_parse_failed": true,
+        "uses_interview": true
+      }
+    },
+    {
+      "id": "form-not-found",
+      "description": "Form ID inexistant : afficher erreur 404 clair + re-demander",
+      "input": {
+        "args": "https://app-eu1.hubspot.com/forms/26173790/new-editor/00000000-0000-0000-0000-000000000000"
+      },
+      "expected": {
+        "fetch_status": 404,
+        "error_message_contains": "form not found",
+        "action": "re-ask user for portalId + formId"
+      }
+    }
+  ]
+}

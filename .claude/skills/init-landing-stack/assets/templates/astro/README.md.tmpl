@@ -1,0 +1,88 @@
+# {{PROJECT_NAME}}
+
+Landing page {{PROJECT_TYPE}} — Astro 6 + Tailwind 4 + Supabase + Netlify.
+
+Genere par le skill `init-landing-stack`.
+
+## URLs
+
+- **Production** : {{NL_SITE_URL}}
+- **Dashboard Netlify** : https://app.netlify.com/sites/{{NL_SITE_NAME}}
+- **Dashboard Supabase** : https://app.supabase.com/project/{{SB_PROJECT_REF}}
+
+## Stack
+
+| Couche | Techno |
+|--------|--------|
+| Frontend | Astro 6 + Tailwind 4 + TypeScript strict |
+| Backend | Supabase (Postgres + Edge Functions Deno) |
+| Hosting | Netlify (CDN + CI/CD) |
+
+## Demarrer en local
+
+```bash
+# Frontend
+cd front
+npm install
+npm run dev          # http://localhost:4321
+
+# Edge Functions
+supabase start
+supabase functions serve contact-form    # http://localhost:54321
+```
+
+## Structure
+
+```
+.
+├── front/                      # code Astro
+│   └── src/
+│       ├── pages/              # 1 fichier = 1 route
+│       ├── components/         # blocks reutilisables (Hero, ContactForm...)
+│       ├── layouts/Base.astro  # layout commun
+│       ├── styles/global.css   # tailwind + tokens
+│       └── lib/supabase.ts     # client Supabase
+├── supabase/
+│   ├── migrations/             # schema DB
+│   └── functions/              # Edge Functions Deno
+│       └── contact-form/       # handler du form
+├── docs/                       # documentation projet
+├── .claude/                    # contexte Claude Code
+│   ├── rules/                  # regles path-scoped
+│   └── skills/context-guardian # audit du contexte
+├── CLAUDE.md                   # instructions Claude (< 80 lignes)
+└── netlify.toml                # config build
+```
+
+## Commandes utiles
+
+| Commande | Description |
+|----------|-------------|
+| `cd front && npm run dev` | Dev server (port 4321) |
+| `cd front && npm run build` | Build production |
+| `cd front && npm run preview` | Preview du build local |
+| `supabase functions serve contact-form` | Edge Function en local |
+| `supabase db push` | Apply migrations |
+| `netlify deploy --prod` | Deploy production manuel |
+| `npx lighthouse {{NL_SITE_URL}}` | Audit perf |
+
+## Personnaliser
+
+1. **Hero** : edite `front/src/components/Hero.astro` — titre, sous-titre, CTA
+2. **Sections** : ajoute des composants dans `front/src/components/` et importe-les dans `front/src/pages/index.astro`
+3. **Couleurs/typo** : `front/src/styles/global.css` (variables CSS) + classes Tailwind
+4. **Form fields** : modifie `front/src/components/ContactForm.tsx` ET `supabase/functions/contact-form/index.ts`
+
+## Prochaines etapes recommandees
+
+- [ ] Personnaliser le hero et les sections selon ton positionnement
+- [ ] Ajouter une page `/pricing` si necessaire
+- [ ] Configurer le tracking (GA4, Meta Pixel, HubSpot) — utiliser `/connect-hubspot-form` ou `/landing-google-ads`
+- [ ] Connecter un domaine custom (Netlify > Domain settings)
+- [ ] Lancer `/landing-meta-ads` ou `/landing-google-ads` pour optimiser les conversions
+
+## Aide
+
+- Doc stack complete : `.claude/skills/init-landing-stack/` (depuis l'index)
+- Checklist mise en prod : [docs/stack-landing-claude-code/07-conversion-checklist.md](https://github.com/...) (a copier dans `docs/`)
+- Pour auditer le contexte Claude Code : tape "verifie le contexte" ou `/context-guardian`

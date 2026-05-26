@@ -1,0 +1,137 @@
+---
+const testimonials = [
+  {
+    initials: 'JM',
+    name: 'Jean M.',
+    city: 'Paris',
+    regime: '2 biens LMNP',
+    quote: 'En passant au régime réel avec Nopillo, j\'ai économisé 3 200 € la première année. L\'expert m\'a accompagné pour amortir le mobilier que j\'avais oublié.',
+  },
+  {
+    initials: 'CS',
+    name: 'Camille S.',
+    city: 'Lyon',
+    regime: '1 studio LMNP',
+    quote: 'J\'avais peur de la complexité du régime réel. En 30 min de discussion, l\'expert a tout pris en charge. La liasse est partie sans que je touche un papier.',
+  },
+  {
+    initials: 'TR',
+    name: 'Thomas R.',
+    city: 'Bordeaux',
+    regime: '4 biens LMNP',
+    quote: 'Le rapport qualité-prix est imbattable. 599 € pour 11 200 € d\'économies fiscales annuelles, je ne reviendrais pas en arrière.',
+  },
+]
+---
+<section id="testimonials" class="section section-white">
+  <div class="container-regular">
+    <div class="section-header">
+      <span class="badge-eyebrow">Avis vérifiés</span>
+      <h2>Nos clients <span style="color: var(--color-indigo-600);">parlent</span> de nous</h2>
+      <p class="section-lead">
+        Plus de 12 000 propriétaires LMNP nous font confiance pour leur déclaration fiscale.
+      </p>
+    </div>
+
+    <div class="testimonials-grid">
+      {testimonials.map((t) => (
+        <article class="card-solid testimonial-card">
+          <div class="testimonial-stars" aria-label="5 etoiles sur 5">
+            {Array.from({length: 5}).map(() => (
+              <svg width="18" height="18" fill="#FFB800" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568L24 9.748l-6 5.847 1.416 8.252L12 19.771l-7.416 4.076L6 15.595 0 9.748l8.332-1.593z"/></svg>
+            ))}
+          </div>
+          <blockquote class="testimonial-quote">
+            "{t.quote}"
+          </blockquote>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">{t.initials}</div>
+            <div>
+              <p class="testimonial-name">{t.name}</p>
+              <p class="testimonial-meta">{t.city} · {t.regime}</p>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .section-header {
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto 56px;
+  }
+  .section-header .badge-eyebrow { margin-bottom: 16px; }
+  .section-header h2 { margin-bottom: 16px; }
+  .section-lead {
+    font-size: 18px;
+    color: var(--color-graycool-700, #404968);
+    line-height: 1.6;
+  }
+
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  @media (min-width: 768px) {
+    .testimonials-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .testimonial-card {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .testimonial-stars {
+    display: flex;
+    gap: 3px;
+  }
+
+  .testimonial-quote {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--color-brand-black);
+    margin: 0;
+    font-style: normal;
+    flex: 1;
+  }
+
+  .testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid var(--color-indigo-100, #DEDAFF);
+  }
+
+  .testimonial-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-indigo-600) 0%, var(--color-indigo-500) 100%);
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .testimonial-name {
+    font-weight: 600;
+    color: var(--color-brand-black);
+    font-size: 15px;
+  }
+
+  .testimonial-meta {
+    font-size: 13px;
+    color: var(--color-graycool-500, #5D6B98);
+  }
+</style>

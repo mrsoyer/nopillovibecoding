@@ -1,0 +1,59 @@
+# Dependencies (lourd, jamais utile a Claude)
+node_modules/
+**/node_modules/
+
+# Lockfiles (verbose, jamais utile a Claude)
+package-lock.json
+**/package-lock.json
+yarn.lock
+**/yarn.lock
+pnpm-lock.yaml
+
+# Build outputs
+**/dist/
+**/build/
+**/.astro/
+**/.next/
+**/.svelte-kit/
+
+# Cache & temp
+**/.cache/
+**/.netlify/
+**/.vercel/
+**/supabase/.temp/
+**/supabase/.branches/
+
+# Logs
+*.log
+**/npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE local state (les fichiers projet vscode utiles sont gardes)
+.idea/
+
+# Tests output
+coverage/
+**/coverage/
+.nyc_output/
+
+# Env files (donnees sensibles, jamais lire avec Claude)
+.env
+.env.local
+.env.*.local
+**/.env
+**/.env.local
+
+# Playwright artefacts
+.playwright-mcp/
+test-results/
+playwright-report/
+
+# Backups
+.claude/backups/
+
+# Bundle analyse output
+*.stats.json
+*.html.gz

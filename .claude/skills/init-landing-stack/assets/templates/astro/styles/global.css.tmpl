@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-brand-50: 238 242 255;
+    --color-brand-100: 224 231 255;
+    --color-brand-500: 99 102 241;
+    --color-brand-600: 79 70 229;
+    --color-brand-700: 67 56 202;
+    --color-brand-900: 49 46 129;
+
+    --color-bg: 255 255 255;
+    --color-fg: 17 24 39;
+    --color-muted: 107 114 128;
+
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  html {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: rgb(var(--color-bg));
+    color: rgb(var(--color-fg));
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-block rounded-lg px-6 py-3 font-semibold text-white shadow-md transition;
+    background-color: rgb(var(--color-brand-600));
+  }
+  .btn-primary:hover {
+    background-color: rgb(var(--color-brand-700));
+  }
+
+  .container-narrow {
+    @apply mx-auto max-w-3xl px-4;
+  }
+}

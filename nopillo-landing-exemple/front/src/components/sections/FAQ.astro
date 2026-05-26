@@ -1,0 +1,84 @@
+---
+const faqs = [
+  { q: 'Combien coûte un expert-comptable LMNP avec Nopillo ?', a: 'Notre liasse fiscale 2031 est forfaitaire à 599 € TTC par an, incluant la télétransmission, l\'accompagnement annuel et le support illimité. Pas de surprise, pas de devis caché.' },
+  { q: 'Pourquoi ne pas faire soi-même sa liasse LMNP ?', a: 'La liasse 2031 demande des connaissances comptables spécifiques (amortissements, immobilisations, plan comptable). Une erreur peut entraîner un redressement fiscal. Nos experts garantissent la conformité et optimisent chaque ligne déductible.' },
+  { q: 'Quelle différence entre micro-BIC et régime réel ?', a: 'Le micro-BIC applique un abattement forfaitaire de 50 %. Le régime réel permet de déduire vos charges réelles ET les amortissements. Dès que vos charges dépassent 30 % des revenus, le réel est avantageux.' },
+  { q: 'Faut-il un expert dès le premier bien ?', a: 'Oui, recommandé. Dès 5 000 € de revenus locatifs annuels, le régime réel devient intéressant. Et la 1ère année est la plus complexe (mise en place des amortissements). Un expert évite les erreurs structurelles.' },
+  { q: 'Nopillo peut-il gérer plusieurs biens LMNP ?', a: 'Oui. Notre forfait inclut jusqu\'à 3 biens. Au-delà, supplément de 99 € par bien. Nous gérons aussi les SCI à l\'IS, les meublés de tourisme classés et les régimes para-hôteliers.' },
+  { q: 'En combien de temps est traitée ma liasse fiscale ?', a: 'Après réception de vos pièces (relevés, factures, etc.), votre liasse est préparée et télétransmise en moins de 7 jours ouvrés. Vous recevez une preuve de dépôt officielle.' },
+]
+---
+<section id="faq" class="section section-soft">
+  <div class="container-regular" style="max-width: 880px;">
+    <div class="section-header" style="text-align: left; margin-bottom: 40px;">
+      <span class="badge-eyebrow">Questions fréquentes</span>
+      <h2>Vos questions, <span style="color: var(--color-indigo-600);">nos réponses</span></h2>
+    </div>
+
+    <div class="faq-list" itemscope itemtype="https://schema.org/FAQPage">
+      {faqs.map((f) => (
+        <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+          <summary class="faq-summary">
+            <span itemprop="name">{f.q}</span>
+            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </summary>
+          <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+            <p class="faq-answer" itemprop="text">{f.a}</p>
+          </div>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .faq-item {
+    background-color: white;
+    border: 1px solid var(--color-indigo-100, #DEDAFF);
+    border-radius: 12px;
+    padding: 20px 24px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .faq-item:hover {
+    border-color: var(--color-indigo-300, #9C90FF);
+  }
+  .faq-item[open] {
+    box-shadow: 0 1px 10px rgba(0,0,0,0.04);
+  }
+
+  .faq-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    cursor: pointer;
+    list-style: none;
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--color-brand-black);
+    font-family: var(--font-display);
+  }
+  .faq-summary::-webkit-details-marker { display: none; }
+
+  .faq-icon {
+    transition: transform 0.2s ease;
+    color: var(--color-indigo-600, #4033DB);
+    flex-shrink: 0;
+  }
+  .faq-item[open] .faq-icon {
+    transform: rotate(180deg);
+  }
+
+  .faq-answer {
+    margin-top: 16px;
+    color: var(--color-graycool-700, #404968);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+</style>

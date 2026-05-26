@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "supabase": {
+      "type": "http",
+      "url": "https://mcp.supabase.com/mcp?project_ref=kamazblxybkukpkvznkv"
+    },
+    "hubspot": {
+      "type": "http",
+      "url": "https://mcp.hubspot.com/anthropic"
+    },
+    "webflow": {
+      "type": "http",
+      "url": "https://mcp.webflow.com/mcp"
+    }
+  }
+}

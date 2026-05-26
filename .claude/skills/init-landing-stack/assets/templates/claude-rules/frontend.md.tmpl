@@ -1,0 +1,39 @@
+---
+paths:
+  - "front/**"
+---
+
+# Regles frontend — {{PROJECT_NAME}}
+
+## Stack
+Astro 6 + Tailwind 4 + TypeScript strict.
+
+## Composants
+- 1 fichier `.astro` = 1 section de landing (Hero, Features, Pricing, FAQ, ContactForm, Footer).
+- Components React `.tsx` UNIQUEMENT pour islands interactifs (form, accordion, configurateur).
+- Defaut hydratation : `client:visible`. `client:load` uniquement si critique above-the-fold.
+
+## Styling
+- Tailwind 4 inline (pas de fichier CSS custom par composant).
+- Tokens design dans `front/src/styles/global.css` (variables CSS + `@layer base`).
+- Pas de classes Tailwind arbitraires `w-[742px]` sans justification.
+
+## Images
+- `<Image>` d'Astro depuis `astro:assets`, JAMAIS `<img>` brut.
+- `loading="eager"` + `fetchpriority="high"` UNIQUEMENT pour le LCP element (hero image).
+- `loading="lazy"` (defaut) pour tout le reste.
+
+## Performance
+- Cible Lighthouse Performance >= 95.
+- Bundle JS client < 50 KB (audit avec `npx astro check` puis build).
+- Pas de Google Fonts via CDN — self-host dans `public/fonts/`.
+
+## Forms
+- Toujours passer par l'Edge Function `contact-form`, JAMAIS de query Postgres direct cote client.
+- Honeypot anti-spam systematique sur chaque form public.
+- UTM extraction depuis `window.location.search` pour le tracking source.
+
+## A ne pas faire
+- Pas de `client:load` sans raison explicite documentee dans un commentaire.
+- Pas d'animation framer-motion / lottie partout (tue les Core Web Vitals).
+- Pas de `<img>` sans width/height ou en `position: absolute` sans dimensions (CLS).

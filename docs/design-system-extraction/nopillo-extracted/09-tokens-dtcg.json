@@ -1,0 +1,149 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "$description": "Design tokens Nopillo extraits de nopillo.com le 2026-05-05. Format DTCG (W3C Design Tokens Community Group). Importable dans Webflow Variables, Tokens Studio, Style Dictionary.",
+  "color": {
+    "brand": {
+      "black": { "$value": "#09090B", "$type": "color", "$description": "Brand black, utilise sur 662 elements de texte. Different de #000." },
+      "white": { "$value": "#FFFFFF", "$type": "color" },
+      "primary": { "$value": "#4033DB", "$type": "color", "$description": "Indigo-600, couleur primaire de marque" },
+      "soft": { "$value": "#DEDAFF", "$type": "color", "$description": "Indigo-100, backgrounds sections" },
+      "mint": { "$value": "#0CC28C", "$type": "color", "$description": "Secondary-600, vert highlight" }
+    },
+    "indigo": {
+      "5":   { "$value": "#FAFAFE", "$type": "color" },
+      "10":  { "$value": "#EEECFF", "$type": "color" },
+      "50":  { "$value": "#F6F5FD", "$type": "color" },
+      "100": { "$value": "#DEDAFF", "$type": "color" },
+      "200": { "$value": "#BDB5FF", "$type": "color" },
+      "300": { "$value": "#9C90FF", "$type": "color" },
+      "400": { "$value": "#8275FF", "$type": "color" },
+      "500": { "$value": "#5747FF", "$type": "color" },
+      "600": { "$value": "#4033DB", "$type": "color" },
+      "700": { "$value": "#2D23B7", "$type": "color" },
+      "800": { "$value": "#1E1693", "$type": "color" },
+      "900": { "$value": "#0F0167", "$type": "color" }
+    },
+    "graycool": {
+      "25":  { "$value": "#FCFCFD", "$type": "color" },
+      "50":  { "$value": "#F9F9FB", "$type": "color" },
+      "100": { "$value": "#EFF1F5", "$type": "color" },
+      "200": { "$value": "#DCDFEA", "$type": "color" },
+      "300": { "$value": "#B9C0D4", "$type": "color" },
+      "400": { "$value": "#7D89B0", "$type": "color" },
+      "500": { "$value": "#5D6B98", "$type": "color" },
+      "600": { "$value": "#4A5578", "$type": "color" },
+      "700": { "$value": "#404968", "$type": "color" },
+      "800": { "$value": "#30374F", "$type": "color" },
+      "900": { "$value": "#111322", "$type": "color" }
+    },
+    "secondary": {
+      "10":  { "$value": "#EEFCF0", "$type": "color" },
+      "50":  { "$value": "#E4FFEA", "$type": "color" },
+      "100": { "$value": "#CEFDD8", "$type": "color" },
+      "200": { "$value": "#93FCBB", "$type": "color" },
+      "400": { "$value": "#48ED9B", "$type": "color" },
+      "600": { "$value": "#0CC28C", "$type": "color" }
+    },
+    "emeraude": {
+      "300": { "$value": "#6DF6A4", "$type": "color" },
+      "400": { "$value": "#6DF6A4", "$type": "color" },
+      "500": { "$value": "#11E28F", "$type": "color" },
+      "800": { "$value": "#058376", "$type": "color" },
+      "900": { "$value": "#036C6C", "$type": "color" }
+    },
+    "orange": {
+      "50":  { "$value": "#FFFBF5", "$type": "color" },
+      "100": { "$value": "#FFF3DF", "$type": "color", "$description": "Headband annonce default" },
+      "200": { "$value": "#FFE9C9", "$type": "color" },
+      "600": { "$value": "#FFA057", "$type": "color" }
+    },
+    "neutral": {
+      "50":  { "$value": "#FAFAFA", "$type": "color" },
+      "100": { "$value": "#F5F5F5", "$type": "color" },
+      "200": { "$value": "#EBEBEB", "$type": "color" },
+      "500": { "$value": "#8E98AD", "$type": "color" }
+    },
+    "danger": {
+      "50":  { "$value": "#FDEAED", "$type": "color" },
+      "500": { "$value": "#DB3352", "$type": "color" }
+    },
+    "lp": {
+      "red":          { "$value": "#F45B69", "$type": "color" },
+      "lightGreen":   { "$value": "#ADEFC5", "$type": "color" },
+      "darkGreen":    { "$value": "#186031", "$type": "color" },
+      "lightPurple":  { "$value": "#CDBDFF", "$type": "color" },
+      "darkPurple":   { "$value": "#25245E", "$type": "color" },
+      "orange":       { "$value": "#FFC192", "$type": "color" },
+      "taupe":        { "$value": "#F6F7F2", "$type": "color" }
+    }
+  },
+  "fontFamily": {
+    "display": { "$value": "futura-pt, sans-serif", "$type": "fontFamily" },
+    "body":    { "$value": "\"Futura PT\", system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif", "$type": "fontFamily" },
+    "lp":      { "$value": "Splinesans, sans-serif", "$type": "fontFamily", "$description": "Pages LP marketing uniquement" }
+  },
+  "fontSize": {
+    "xs":   { "$value": "12px", "$type": "dimension" },
+    "sm":   { "$value": "14px", "$type": "dimension" },
+    "base": { "$value": "16px", "$type": "dimension" },
+    "lg":   { "$value": "18px", "$type": "dimension" },
+    "xl":   { "$value": "20px", "$type": "dimension" },
+    "2xl":  { "$value": "24px", "$type": "dimension" },
+    "3xl":  { "$value": "28px", "$type": "dimension" },
+    "4xl":  { "$value": "40px", "$type": "dimension" },
+    "displaySm": { "$value": "48px", "$type": "dimension" },
+    "displayMd": { "$value": "56px", "$type": "dimension", "$description": "H2 default" },
+    "displayLg": { "$value": "60px", "$type": "dimension", "$description": "H1 default (59.2px arrondi)" },
+    "displayXl": { "$value": "68px", "$type": "dimension" }
+  },
+  "fontWeight": {
+    "regular": { "$value": 400, "$type": "fontWeight" },
+    "medium":  { "$value": 500, "$type": "fontWeight" },
+    "demi":    { "$value": 600, "$type": "fontWeight" },
+    "bold":    { "$value": 700, "$type": "fontWeight" }
+  },
+  "lineHeight": {
+    "tight":   { "$value": 1.14, "$type": "number", "$description": "H2" },
+    "snug":    { "$value": 1.22, "$type": "number", "$description": "H1" },
+    "normal":  { "$value": 1.5,  "$type": "number", "$description": "Body" },
+    "relaxed": { "$value": 1.6,  "$type": "number", "$description": "Lead" }
+  },
+  "borderRadius": {
+    "xs":     { "$value": "4px",   "$type": "dimension" },
+    "sm":     { "$value": "6px",   "$type": "dimension" },
+    "md":     { "$value": "8px",   "$type": "dimension" },
+    "lg":     { "$value": "16px",  "$type": "dimension", "$description": "Cards (DEFAULT)" },
+    "xl":     { "$value": "24px",  "$type": "dimension" },
+    "2xl":    { "$value": "32px",  "$type": "dimension" },
+    "pill":   { "$value": "999px", "$type": "dimension", "$description": "Boutons" },
+    "circle": { "$value": "50%",   "$type": "dimension" }
+  },
+  "spacing": {
+    "0":  { "$value": "0px",   "$type": "dimension" },
+    "1":  { "$value": "4px",   "$type": "dimension" },
+    "2":  { "$value": "8px",   "$type": "dimension" },
+    "3":  { "$value": "12px",  "$type": "dimension" },
+    "4":  { "$value": "16px",  "$type": "dimension" },
+    "5":  { "$value": "20px",  "$type": "dimension" },
+    "6":  { "$value": "24px",  "$type": "dimension" },
+    "8":  { "$value": "32px",  "$type": "dimension" },
+    "10": { "$value": "40px",  "$type": "dimension" },
+    "12": { "$value": "48px",  "$type": "dimension" },
+    "16": { "$value": "64px",  "$type": "dimension" },
+    "20": { "$value": "80px",  "$type": "dimension" },
+    "32": { "$value": "128px", "$type": "dimension" }
+  },
+  "shadow": {
+    "card":     { "$value": { "x": "0", "y": "1px", "blur": "10px", "spread": "0", "color": "rgba(0, 0, 0, 0.06)" }, "$type": "shadow", "$description": "Card default" },
+    "elevated": { "$value": { "x": "0", "y": "1px", "blur": "16px", "spread": "0", "color": "rgba(0, 0, 0, 0.08)" }, "$type": "shadow", "$description": "Card hover/focus" },
+    "subtle":   { "$value": { "x": "0", "y": "1px", "blur": "10px", "spread": "0", "color": "rgba(0, 0, 0, 0.05)" }, "$type": "shadow" }
+  },
+  "container": {
+    "regular": { "$value": "1120px", "$type": "dimension", "$description": "Container default Nopillo" },
+    "navbar":  { "$value": "1408px", "$type": "dimension" }
+  },
+  "transition": {
+    "default": { "$value": "all 0.3s ease", "$type": "transition" },
+    "fast":    { "$value": "all 0.15s ease", "$type": "transition" }
+  }
+}

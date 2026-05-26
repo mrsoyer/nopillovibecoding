@@ -1,0 +1,233 @@
+---
+// Footer — Pied de page Nopillo
+// Variants : full (5 colonnes) | minimal (1 ligne)
+// Source DS : .claude/skills/apply-nopillo-ds/references/components-anatomy.md
+
+interface LinkItem {
+  label: string;
+  url: string;
+}
+
+interface SocialLink {
+  platform: string;
+  url: string;
+}
+
+interface Props {
+  variant?: 'full' | 'minimal';
+  logoUrl?: string;
+  servicesLinks?: LinkItem[];
+  resourcesLinks?: LinkItem[];
+  legalLinks?: LinkItem[];
+  socialLinks?: SocialLink[];
+  showNewsletter?: boolean;
+  newsletterEndpoint?: string;
+  copyright?: string;
+}
+
+const {
+  variant = 'full',
+  logoUrl = '/logo-nopillo.svg',
+  servicesLinks = [],
+  resourcesLinks = [],
+  legalLinks = [
+    { label: 'Mentions légales', url: '/mentions-legales' },
+    { label: 'Politique de confidentialité', url: '/privacy' },
+    { label: 'CGV', url: '/cgv' },
+  ],
+  socialLinks = [],
+  showNewsletter = false,
+  newsletterEndpoint = '',
+  copyright = `© ${new Date().getFullYear()} Nopillo. Tous droits réservés.`,
+} = Astro.props;
+---
+
+<footer class:list={['footer', `footer-${variant}`]}>
+  <div class="container">
+    {variant === 'full' && (
+      <div class="grid-columns">
+        <div class="col-brand">
+          <img src={logoUrl} alt="Nopillo" class="logo-footer" />
+          <p class="baseline">Votre déclaration LMNP. Simplifiée. Optimisée.</p>
+        </div>
+
+        {servicesLinks.length > 0 && (
+          <div class="col-links">
+            <h6>Services</h6>
+            <ul>
+              {servicesLinks.map((link) => (
+                <li><a href={link.url}>{link.label}</a></li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {resourcesLinks.length > 0 && (
+          <div class="col-links">
+            <h6>Ressources</h6>
+            <ul>
+              {resourcesLinks.map((link) => (
+                <li><a href={link.url}>{link.label}</a></li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <div class="col-links">
+          <h6>Légal</h6>
+          <ul>
+            {legalLinks.map((link) => (
+              <li><a href={link.url}>{link.label}</a></li>
+            ))}
+          </ul>
+        </div>
+
+        {showNewsletter && (
+          <div class="col-newsletter">
+            <h6>Newsletter</h6>
+            <form action={newsletterEndpoint} method="POST">
+              <input type="email" name="email" placeholder="votre@email.fr" required />
+              <button type="submit">OK</button>
+            </form>
+          </div>
+        )}
+      </div>
+    )}
+
+    <div class="bottom-bar">
+      <span>{copyright}</span>
+      {socialLinks.length > 0 && (
+        <ul class="social">
+          {socialLinks.map((s) => (
+            <li><a href={s.url} aria-label={s.platform}>{s.platform}</a></li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background-color: var(--black);
+    color: var(--white);
+    padding: 80px 0 32px;
+    font-family: var(--font-body);
+  }
+
+  .footer .container {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+
+  .grid-columns {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 48px;
+    margin-bottom: 48px;
+  }
+
+  @media (min-width: 768px) {
+    .grid-columns {
+      grid-template-columns: 1.5fr repeat(4, 1fr);
+      gap: 32px;
+    }
+  }
+
+  .logo-footer {
+    height: 32px;
+    margin-bottom: 16px;
+    filter: brightness(0) invert(1);
+  }
+
+  .baseline {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.5;
+  }
+
+  h6 {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0 0 16px;
+    color: var(--white);
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .col-links a {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 16px;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .col-links a:hover {
+    color: var(--white);
+  }
+
+  .col-newsletter form {
+    display: flex;
+    gap: 8px;
+  }
+
+  .col-newsletter input {
+    flex: 1;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--white);
+    padding: 10px 16px;
+    border-radius: 999px;
+    font-size: 14px;
+  }
+
+  .col-newsletter button {
+    background-color: var(--indigo-600);
+    color: var(--white);
+    border: none;
+    border-radius: 999px;
+    padding: 10px 20px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .bottom-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .social {
+    flex-direction: row;
+    gap: 16px;
+  }
+
+  .social a {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+  }
+
+  .footer-minimal {
+    padding: 24px 0;
+  }
+
+  .footer-minimal .grid-columns {
+    display: none;
+  }
+</style>
