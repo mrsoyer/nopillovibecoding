@@ -2,10 +2,11 @@
 
 > Guide complet pour qu'un etudiant (Mac OU Windows) clone le repo GitHub, installe tout le necessaire, configure ses comptes cloud (Supabase, Netlify, HubSpot optionnel), connecte les MCPs Claude Code, et fasse tourner la landing avec `npm run dev` en moins de 30 minutes.
 
-## Parcours etudiant (en 6 etapes)
+## Parcours etudiant (en 7 etapes)
 
 | Etape | Duree | Fichier | Action |
 |-------|-------|---------|--------|
+| **0 (Slack J-3)** | 20 min | [00-installation-slack.md](00-installation-slack.md) | **Pre-skill** : VSCode + Claude Code + plugins + skill student-setup |
 | **1** | 5-10 min | [01-prerequis-systeme.md](01-prerequis-systeme.md) | Installer Node.js 22+, Git, configurer le terminal |
 | **2** | 2 min | [02-cloner-projet.md](02-cloner-projet.md) | `git clone` du repo GitHub du prof |
 | **3** | 5 min | [03-installer-clis.md](03-installer-clis.md) | Installer Netlify CLI + Supabase CLI |
@@ -14,7 +15,11 @@
 | **6** | 2 min | [06-lancer-dev.md](06-lancer-dev.md) | `npm install` + `npm run dev` → voir la landing localement |
 | **+** | si bloque | [07-troubleshooting.md](07-troubleshooting.md) | Erreurs frequentes + solutions |
 
-**Total estime** : 25-30 minutes.
+**Total estime** : 20 min (etape 0 a J-3) + 25-30 min le jour J (etapes 1-6 automatisees par le skill).
+
+> **Architecture formation** :
+> - **Etape 0** : faite par chaque participant AVANT le jour J via le message Slack.
+> - **Etapes 1-6** : executees automatiquement par le skill `student-setup` lance dans Claude Code au demarrage.
 
 ## Ce que l'etudiant aura a la fin
 

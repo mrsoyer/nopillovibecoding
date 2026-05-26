@@ -25,16 +25,8 @@ Tu guides un etudiant debutant (Mac ou Windows) pas a pas, de zero jusqu'a `npm 
 
 ## Documentation projet (source de verite)
 
-| Fichier | Contenu |
-|---------|---------|
-| [docs/student-onboarding/_index.md](../../../docs/student-onboarding/_index.md) | Vue d'ensemble du parcours |
-| [docs/student-onboarding/01-prerequis-systeme.md](../../../docs/student-onboarding/01-prerequis-systeme.md) | Detail Node.js + Git |
-| [docs/student-onboarding/03-installer-clis.md](../../../docs/student-onboarding/03-installer-clis.md) | Detail Netlify CLI + Supabase CLI |
-| [docs/student-onboarding/04-comptes-cloud.md](../../../docs/student-onboarding/04-comptes-cloud.md) | Detail Supabase + Netlify |
-| [docs/student-onboarding/05-config-env-mcp.md](../../../docs/student-onboarding/05-config-env-mcp.md) | Detail .env + MCPs |
-| [docs/student-onboarding/07-troubleshooting.md](../../../docs/student-onboarding/07-troubleshooting.md) | Detail erreurs |
-
-> Tu PEUX referencer ces docs si l'etudiant veut comprendre plus, mais tu n'as PAS besoin de les lire pour executer les phases.
+Detail complet par phase : [docs/student-onboarding/](../../../docs/student-onboarding/) (9 fichiers, 1300+ lignes).
+Reference au besoin, pas obligatoire pour executer le workflow.
 
 ## Workflow (7 phases — toujours en ordre)
 
@@ -45,8 +37,50 @@ Saluer l'etudiant brievement :
 ```
 Salut ! Je vais te guider pour lancer la landing Nopillo en local. ~25 min.
 
-Premiere etape : je verifie ton systeme et j'installe Git si necessaire (indispensable pour cloner le repo).
+Si tu m'entends, c'est que tu as deja :
+  ✓ VSCode installe
+  ✓ Claude Code CLI installe (tu lances ce skill, donc OK)
+  ✓ Telecharge ce skill dans .claude/skills/student-setup/
+
+Premiere etape : je verifie ton systeme et j'installe Git + plugins VSCode si necessaire.
 ```
+
+**Etape 0.0 — Verifier plugins VSCode (rapide)**
+
+Demander a l'etudiant via AskUserQuestion :
+
+> "As-tu installe les 2 plugins VSCode demandes ?
+>  1. **Claude Code** (par Anthropic)
+>  2. **XLSX, CSV, TSV & Markdown Editor** (par ramaroe ou similaire)"
+
+| Reponse | Action |
+|---|---|
+| Oui les deux | Passer a 0.1 |
+| Un seul / Aucun | Donner les commandes ci-dessous |
+| Je ne sais pas | Verifier via `code --list-extensions` |
+
+Verification automatique (si VSCode CLI dans PATH) :
+
+```bash
+code --list-extensions 2>/dev/null | grep -E "anthropic|claude|csv|xlsx" | head -10
+```
+
+Installation rapide en ligne de commande si manquants :
+
+```bash
+# Plugin Claude Code (officiel Anthropic)
+code --install-extension Anthropic.claude-code
+
+# Plugin XLSX/CSV/Markdown editor (utile pour visualiser les data)
+code --install-extension GrapeCity.gc-excelviewer
+```
+
+Si `code` n'est pas dans le PATH (Mac) :
+> "Dans VSCode : Cmd+Shift+P → tape 'Shell Command: Install code command in PATH' → Enter. Puis recharge le terminal."
+
+Si l'etudiant prefere installer via UI : direction VSCode → onglet Extensions (Cmd+Shift+X) → chercher chaque plugin → Install.
+
+**Ne pas bloquer** sur les plugins : ils sont pratiques mais pas critiques. Si l'etudiant est presse, passer a 0.1 et y revenir plus tard.
 
 **Etape 0.1 — Detecter l'OS**
 
@@ -184,14 +218,26 @@ Si "Access token not provided" : lancer `supabase login`.
 
 **URL fixe du projet** : `https://github.com/mrsoyer/nopillovibecoding`
 
+**Structure du repo** (workspace + projet dans sous-dossier) :
+```
+nopillovibecoding/                    <- workspace (racine du clone)
+├── .claude/                          <- skills + rules
+├── .mcp.json                         <- config MCPs (a configurer)
+├── CLAUDE.md
+├── docs/
+└── nopillo-landing-exemple/          <- LE PROJET landing
+    ├── front/                         <- ou se trouve .env + package.json
+    ├── supabase/                      <- migrations + Edge Functions
+    └── netlify.toml
+```
+
 Verifier d'abord si on est deja dans le repo :
 
 ```bash
 git remote -v 2>&1 | grep nopillovibecoding
-ls front/package.json 2>/dev/null
 ```
 
-**Si deja clone et a jour** : skip, passer a Phase 5.
+**Si deja clone** : `cd` vers la racine du workspace `nopillovibecoding/` et passer a Phase 5.
 
 **Si pas clone** :
 
@@ -203,7 +249,7 @@ mkdir -p ~/projets && cd ~/projets
 mkdir $HOME\projets -Force; cd $HOME\projets
 ```
 
-Puis :
+Puis cloner :
 
 ```bash
 git clone https://github.com/mrsoyer/nopillovibecoding.git
@@ -211,24 +257,21 @@ cd nopillovibecoding
 ```
 
 Si l'auth GitHub est demandee :
-- **Option facile** : installer GitHub CLI et faire `gh auth login`
+- **Option facile** : `gh CLI`
   - Mac : `brew install gh && gh auth login`
   - Windows : `winget install GitHub.cli && gh auth login`
   - Puis re-tenter : `gh repo clone mrsoyer/nopillovibecoding`
-- **Sinon** : Git Credential Manager (Mac keychain ou Windows Credential Store) gere l'auth via browser
+- **Sinon** : Git Credential Manager gere l'auth via browser au premier `git clone`
 
 Verifier que le clone a reussi :
 
 ```bash
 ls -la
-# doit contenir : .claude/ .mcp.json CLAUDE.md README.md docs/ front/ netlify.toml supabase/
+# doit contenir : .claude/ .mcp.json CLAUDE.md docs/ nopillo-landing-exemple/
 ```
 
-Si le repo est vide (cas d'erreur edge) :
-- STOP et signaler a l'etudiant de contacter le prof
-- Le repo `mrsoyer/nopillovibecoding` doit contenir le code source
-
-> **Note** : Le student-setup ne demande PAS l'URL a l'etudiant (URL hardcodee). Le prof a partage l'URL en amont via Slack/Discord.
+**Important** : a partir de maintenant, ton **cwd de reference est** `nopillovibecoding/` (racine workspace).
+Les commandes Supabase et npm seront dans le sous-dossier `nopillo-landing-exemple/`.
 
 ### Phase 5 — Recuperer les credentials Supabase
 
@@ -249,60 +292,140 @@ Valider les inputs avec regex :
 
 Si invalide : re-demander avec exemple.
 
-### Phase 6 — Configurer .env, .mcp.json, deployer EFs
+### Phase 6 — Configurer .env, .mcp.json, deployer EFs (obligatoire AVANT Phase 7)
 
-**Etape 6.1 — front/.env**
+> **critique** : ces 5 etapes doivent toutes etre completes AVANT de lancer `npm run dev` (Phase 7). Si tu skip, le formulaire ne marchera pas et l'etudiant aura une page cassee.
+
+Depuis la racine `nopillovibecoding/`.
+
+**Etape 6.1 — Creer front/.env (obligatoire)**
 
 ```bash
-cd front
-cp .env.example .env  # Mac/Linux
-copy .env.example .env  # Windows PowerShell (utiliser : (Test-Path .env) -or (Copy-Item .env.example .env))
+cd nopillo-landing-exemple/front
+cp .env.example .env          # Mac
+# OU Windows PowerShell :
+Copy-Item .env.example .env
 ```
 
-Editer le `.env` avec les valeurs collectees en Phase 5 :
+Editer le `.env` avec les valeurs collectees en Phase 5 (utiliser l'outil **Edit** de Claude, pas sed inline) :
 
-```bash
-PUBLIC_SUPABASE_URL=<URL>
-PUBLIC_SUPABASE_ANON_KEY=<ANON_KEY>
+```
+PUBLIC_SUPABASE_URL=https://<TON-PROJECT-REF>.supabase.co
+PUBLIC_SUPABASE_ANON_KEY=<TON-ANON-KEY>
 PUBLIC_GTM_ID=GTM-XXXXXX
 PUBLIC_GA4_MEASUREMENT_ID=G-XXXXXXXXXX
 PUBLIC_GOOGLE_ADS_CONVERSION_ID=AW-XXXXXXXXX/XXXXXXXX
 ```
 
-Utiliser l'outil Edit (pas sed inline) pour eviter les erreurs de quoting.
+**Validation 6.1** : verifier que le fichier existe et contient les bonnes valeurs :
 
-**Etape 6.2 — .mcp.json**
+```bash
+cat .env | grep PUBLIC_SUPABASE_URL    # Mac
+Get-Content .env | Select-String PUBLIC_SUPABASE_URL    # Windows
+```
+
+Si vide ou XXX : stop, redemander a l'etudiant.
+
+**Etape 6.2 — Configurer .mcp.json (racine workspace)**
+
+```bash
+cd ../..    # remonter a nopillovibecoding/
+```
 
 Remplacer le `project_ref` du prof par celui de l'etudiant :
 
 ```bash
-cd ..  # remonter racine
 claude mcp remove --scope project supabase 2>&1 | tail -1
 claude mcp add --scope project --transport http supabase \
   "https://mcp.supabase.com/mcp?project_ref=<TON-REF>"
 ```
 
-**Etape 6.3 — Link Supabase + push migrations + deploy EFs**
+**Validation 6.2** :
+```bash
+cat .mcp.json | grep "$TON_REF"        # doit afficher l'URL avec le ref
+```
+
+**Etape 6.3 — Authentifier les MCPs dans Claude Code (obligatoire)**
+
+Indique a l'etudiant :
+
+> "Pour activer les MCPs, tape la commande suivante dans le prompt Claude Code (pas dans le terminal shell) :
+>   `/mcp`
+> 
+> Tu vas voir 3 MCPs : supabase, hubspot, webflow. Pour chacun marque 'Needs authentication' :
+> 1. Selectionne-le
+> 2. Browser s'ouvre → autorise
+> 3. Reviens dans Claude Code"
+
+Attendre que l'etudiant confirme avoir fait les 3 OAuth.
+
+**Validation 6.3** :
+```bash
+claude mcp list 2>&1 | grep -E "supabase|hubspot|webflow"
+```
+
+Tous doivent montrer `✓ Connected`. Si l'un reste "Needs authentication" → refaire l'OAuth.
+
+> **Pourquoi obligatoire avant `npm run dev` ?** Les MCPs permettent a Claude Code de diagnostiquer en direct si le form ne marche pas (lire les tables Supabase, verifier les logs Edge Function). Sans les MCPs, l'etudiant sera bloque au moindre probleme.
+
+**Etape 6.4 — Link Supabase + push migrations + deploy EFs**
 
 ```bash
+cd nopillo-landing-exemple
 supabase link --project-ref <TON-REF>
 # → demande le mot de passe DB (attendre input user)
 
 supabase db push
 # → applique migrations dans le projet de l'etudiant
+# → cree la table public.leads
 
 supabase functions deploy contact-form --no-verify-jwt --project-ref <TON-REF>
 supabase functions deploy hubspot-form-submit --no-verify-jwt --project-ref <TON-REF>
 ```
 
-Si erreur Docker (CLI < 2.45) : proposer `brew upgrade supabase` / `scoop update supabase` et retry.
+Si erreur Docker (CLI < 2.45) : `brew upgrade supabase` / `scoop update supabase` et retry.
+
+**Validation 6.4** :
+```bash
+supabase functions list --project-ref <TON-REF>
+# Doit lister : contact-form, hubspot-form-submit
+```
+
+**Etape 6.5 — Checkpoint Gate avant Phase 7**
+
+Avant de passer a Phase 7 (npm run dev), valider TOUS ces points :
+
+```
+CHECKPOINT (obligatoire)
+  [ ] front/.env existe et contient PUBLIC_SUPABASE_URL non-XXX
+  [ ] front/.env contient PUBLIC_SUPABASE_ANON_KEY non-XXX
+  [ ] .mcp.json contient le bon project_ref (pas celui du prof)
+  [ ] MCP supabase : ✓ Connected (via claude mcp list)
+  [ ] Supabase project link OK (supabase status sans erreur)
+  [ ] Edge Function contact-form deployee
+  [ ] Edge Function hubspot-form-submit deployee
+  [ ] Table public.leads existe dans le projet Supabase
+```
+
+Verification rapide en 1 commande :
+
+```bash
+echo "=== Checkpoint ===" && \
+test -f nopillo-landing-exemple/front/.env && echo "  .env: OK" || echo "  .env: MISSING" && \
+grep -q "PUBLIC_SUPABASE_URL=https" nopillo-landing-exemple/front/.env && echo "  URL: OK" || echo "  URL: MISSING" && \
+claude mcp list 2>&1 | grep "supabase.*Connected" && echo "  MCP: OK" || echo "  MCP: NOT AUTH"
+```
+
+**Si UN seul check echoue : retour a l'etape correspondante. NE PAS lancer Phase 7.**
 
 ### Phase 7 — npm install + npm run dev + verification
+
+> **Prerequis** : Phase 6 entierement complete (Checkpoint Gate passe). Sinon stop.
 
 **Etape 7.1 — Installer dependances**
 
 ```bash
-cd front
+cd nopillo-landing-exemple/front      # depuis racine nopillovibecoding/
 npm install
 ```
 
@@ -407,43 +530,12 @@ Temps total : XX min. Bravo !
 - ❌ Ignorer une erreur sans diagnostic
 - ❌ Demander toutes les credentials en 1 question batch (utiliser AskUserQuestion sequentielle)
 - ❌ Hardcoder le project_ref du prof (chaque etudiant le sien)
-- ❌ Continuer si Phase X echoue : STOP et fix
+- ❌ Continuer si Phase X echoue : stop et fix
 
-## Exemples de scenarios
+## Exemples (resumes)
 
-### Scenario 1 — Mac fresh install
+- **Mac fresh** : install Git+Node+CLIs → clone → credentials → config + MCPs OAuth → deploy EFs → npm run dev. ~20 min.
+- **Windows partiel** : Node deja la, install Netlify+Supabase via scoop, Docker upgrade auto pour Supabase 2.45+. ~12 min.
+- **Port 4321 occupe** : EADDRINUSE → propose `kill process` ou `--port 4322` via AskUserQuestion → retry.
 
-```
-User: /student-setup
-Skill: Detecte Mac. Node manquant.
-       Demande : "brew ou nvm ?" → brew.
-       Installe Node, Git, Netlify CLI, Supabase CLI.
-       Demande URL GitHub du prof. Clone.
-       Demande credentials Supabase. Configure .env + .mcp.json.
-       Link + migrate + deploy EFs.
-       npm install + npm run dev.
-       Verifie HTTP 200. SUCCESS en 18 min.
-```
-
-### Scenario 2 — Windows avec partiel
-
-```
-User: /student-setup
-Skill: Detecte Windows. Node v22 OK, Git OK, Netlify et Supabase manquants.
-       Installe netlify-cli via npm, Supabase CLI via scoop.
-       Verifie qu'on est dans le repo (oui, deja clone).
-       Demande credentials Supabase. Configure.
-       Deploy EFs : erreur Docker → upgrade CLI → retry → OK.
-       npm install + npm run dev. SUCCESS en 12 min.
-```
-
-### Scenario 3 — Erreur port 4321 occupe
-
-```
-User: /student-setup (apres tout setup OK)
-Skill: npm run dev → EADDRINUSE
-       Diagnostic : port 4321 occupe (autre projet ?)
-       Propose : `lsof -ti:4321 | xargs kill -9` OU `npm run dev -- --port 4322`
-       User : "kill"
-       Skill execute, retry, OK sur 4321.
-```
+Voir [evals/evals.json](evals/evals.json) pour 5 scenarios complets de test.
