@@ -1,60 +1,22 @@
-import { useState, useEffect, useRef } from 'react'
-import { submitContactForm } from '../../lib/supabase'
-import { readDKI, type DKIContext } from '../../lib/dki'
-import { trackFormStart, trackFormSubmit, trackConversion } from '../../lib/tracking'
+import { useState, useRef } from 'react'
 
-type Status = 'idle' | 'sending' | 'sent' | 'error'
+type Status = 'idle' | 'sending' | 'sent'
 
 export default function ContactForm() {
   const [status, setStatus] = useState<Status>('idle')
-  const [errorMsg, setErrorMsg] = useState('')
-  const [dki, setDki] = useState<DKIContext | null>(null)
   const startedRef = useRef(false)
 
-  useEffect(() => {
-    setDki(readDKI())
-  }, [])
-
   function onFocus() {
-    if (!startedRef.current) {
-      trackFormStart('contact-main')
-      startedRef.current = true
-    }
+    startedRef.current = true
   }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setStatus('sending')
-    setErrorMsg('')
-
     const form = e.currentTarget
-    const data = new FormData(form)
-    const payload = {
-      name: String(data.get('name') || ''),
-      email: String(data.get('email') || ''),
-      phone: String(data.get('phone') || ''),
-      message: String(data.get('message') || ''),
-      source: 'landing-home',
-      honeypot: String(data.get('website') || ''),
-      utm: dki?.utm ?? undefined,
-      gclid: dki?.gclid ?? null,
-      search_term: dki?.search_term ?? null,
-      match_type: dki?.match_type ?? null,
-      device: dki?.device ?? null,
-      landing_page_url: typeof window !== 'undefined' ? window.location.href : null,
-    }
-
-    try {
-      const res = await submitContactForm(payload)
-      trackFormSubmit('contact-main', dki?.keyword ?? null, dki?.match_type ?? null)
-      trackConversion(res.leadId)
-      setStatus('sent')
-      form.reset()
-    } catch (err) {
-      console.error('Form submit failed', err)
-      setErrorMsg(err instanceof Error ? err.message : 'Erreur inattendue')
-      setStatus('error')
-    }
+    await new Promise(r => setTimeout(r, 600))
+    setStatus('sent')
+    form.reset()
   }
 
   if (status === 'sent') {
@@ -128,12 +90,6 @@ export default function ContactForm() {
       >
         {status === 'sending' ? 'Envoi en cours...' : 'Recevoir ma simulation gratuite'}
       </button>
-
-      {status === 'error' && (
-        <p role="alert" aria-live="polite" className="text-red-600 text-sm">
-          {errorMsg || 'Une erreur est survenue. Reessayez ou contactez-nous a contact@nopillo.fr'}
-        </p>
-      )}
 
       <p className="text-xs text-zinc-500 leading-relaxed">
         En soumettant ce formulaire, vous acceptez que vos donnees soient traitees par Nopillo
