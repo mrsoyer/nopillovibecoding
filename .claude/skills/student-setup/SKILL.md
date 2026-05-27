@@ -5,7 +5,7 @@ description: >
   Detecte l'OS, installe ce qui manque, demande les credentials Supabase, execute avec retry,
   termine par npm run dev. Itere jusqu'a succes.
 argument-hint: ""
-allowed-tools: Read Write Edit Bash AskUserQuestion
+allowed-tools: Read Write Edit Bash AskUserQuestion mcp__playwright__browser_navigate mcp__playwright__browser_snapshot mcp__playwright__browser_take_screenshot mcp__playwright__browser_close mcp__playwright__browser_click mcp__playwright__browser_type mcp__playwright__browser_fill_form mcp__playwright__browser_wait_for
 model: sonnet
 effort: high
 ---
@@ -162,12 +162,15 @@ Afficher un dashboard clair :
 
 ```
 PRE-REQUIS (apres install Git)
-  Git       : 2.x       OK
-  Node      : v24.x.x   OK
-  npm       : 10.x      OK
-  Netlify   : MISSING   -> a installer
-  Supabase  : MISSING   -> a installer
+  Git              : 2.x       OK
+  Node             : v24.x.x   OK
+  npm              : 10.x      OK
+  Netlify CLI      : MISSING   -> a installer (Phase 2)
+  Supabase CLI     : MISSING   -> a installer (Phase 2)
+  Playwright Chromium : ABSENT  -> a pre-telecharger (Phase 2.5)
 ```
+
+Note : Playwright n'a pas besoin d'install globale. Le MCP est lance via `npx` (deja dans le `.mcp.json`). Mais le browser Chromium doit etre pre-telecharge pour eviter un freeze au premier usage.
 
 ### Phase 2 — Installer ce qui manque (hors Git, deja fait)
 
@@ -191,6 +194,35 @@ Si Supabase CLI manquant :
 - Si scoop manque sur Windows : proposer d'installer scoop d'abord (`iwr -useb get.scoop.sh | iex`)
 
 Apres chaque install, **re-verifier** avec `<tool> --version`. Si echec, diagnostiquer (cf. [references/error-patterns.md](references/error-patterns.md)).
+
+**Etape 2.5 — Pre-telecharger Playwright browser (obligatoire pour MCP)**
+
+Le projet utilise le MCP Playwright (defini dans `.mcp.json`). Au premier usage, `npx @playwright/mcp@latest` telecharge automatiquement les browser binaries (~150 MB), ce qui peut prendre 30-60s et bloquer l'etudiant. On les pre-telecharge maintenant :
+
+```bash
+# Cache global npm pour que le download soit reutilise entre projets
+npx --yes @playwright/mcp@latest --help > /dev/null 2>&1 || true
+npx --yes playwright install chromium
+```
+
+Pourquoi `chromium` seulement (pas firefox/webkit) : le MCP Playwright utilise chromium par defaut. Inutile de telecharger les 3 (~450 MB). Si l'etudiant veut tester sur Firefox/Safari plus tard, il peut faire `npx playwright install firefox webkit` a ce moment-la.
+
+Verification :
+```bash
+# Mac/Linux
+ls ~/Library/Caches/ms-playwright/chromium-*/chrome-mac/Chromium.app 2>/dev/null && echo "Chromium OK" || echo "Chromium MISSING"
+
+# Windows
+dir "$env:USERPROFILE\AppData\Local\ms-playwright\chromium-*" 2>$null && Write-Host "Chromium OK"
+```
+
+Si echec :
+- Verifier connection internet
+- Verifier que Node 18+ (sinon download silencieux echoue)
+- Sur Mac : si `xattr` warning sur Chromium, ignorer (Gatekeeper) — le MCP marche quand meme en headless
+- Re-tenter `npx playwright install chromium --force`
+
+> **Pourquoi obligatoire** : sans browser binaries pre-installes, le premier appel a `browser_navigate` (Phase 7.4) prendra 30-60s et l'etudiant croira que le skill est bloque. Mieux vaut un download visible maintenant qu'un freeze plus tard.
 
 ### Phase 3 — Authentifier les CLIs
 
@@ -352,21 +384,31 @@ Indique a l'etudiant :
 > "Pour activer les MCPs, tape la commande suivante dans le prompt Claude Code (pas dans le terminal shell) :
 >   `/mcp`
 > 
-> Tu vas voir 3 MCPs : supabase, hubspot, webflow. Pour chacun marque 'Needs authentication' :
-> 1. Selectionne-le
-> 2. Browser s'ouvre → autorise
-> 3. Reviens dans Claude Code"
+> Tu vas voir 4 MCPs : **supabase**, **hubspot**, **webflow**, **playwright**.
+> 
+> - **supabase**, **hubspot**, **webflow** : marques 'Needs authentication' → OAuth requis
+>   Pour chacun :
+>   1. Selectionne-le
+>   2. Browser s'ouvre → autorise
+>   3. Reviens dans Claude Code
+> 
+> - **playwright** : local stdio (lance via npx), **pas d'OAuth necessaire**. Doit afficher 'Connected' directement. Si 'Failed', voir Phase 2.5 (pre-telechargement browser)."
 
 Attendre que l'etudiant confirme avoir fait les 3 OAuth.
 
 **Validation 6.3** :
 ```bash
-claude mcp list 2>&1 | grep -E "supabase|hubspot|webflow"
+claude mcp list 2>&1 | grep -E "supabase|hubspot|webflow|playwright"
 ```
 
-Tous doivent montrer `✓ Connected`. Si l'un reste "Needs authentication" → refaire l'OAuth.
+Resultat attendu — les 4 doivent montrer `✓ Connected`. Si l'un reste "Needs authentication" → refaire l'OAuth. Si playwright "Failed" → retour Phase 2.5 + check Node 18+.
 
-> **Pourquoi obligatoire avant `npm run dev` ?** Les MCPs permettent a Claude Code de diagnostiquer en direct si le form ne marche pas (lire les tables Supabase, verifier les logs Edge Function). Sans les MCPs, l'etudiant sera bloque au moindre probleme.
+> **Pourquoi obligatoire avant `npm run dev` ?** Les MCPs permettent a Claude Code de :
+> - **supabase** : diagnostiquer en direct (lire les tables, verifier les logs Edge Function)
+> - **hubspot** / **webflow** : verifier que les forms HubSpot recoivent bien les leads, manipuler les pages Webflow
+> - **playwright** : prendre des screenshots de la landing, tester le formulaire end-to-end automatiquement, debug visuel
+>
+> Sans ces MCPs, l'etudiant sera bloque au moindre probleme.
 
 **Etape 6.4 — Link Supabase + push migrations + deploy EFs**
 
@@ -401,6 +443,10 @@ CHECKPOINT (obligatoire)
   [ ] front/.env contient PUBLIC_SUPABASE_ANON_KEY non-XXX
   [ ] .mcp.json contient le bon project_ref (pas celui du prof)
   [ ] MCP supabase : ✓ Connected (via claude mcp list)
+  [ ] MCP hubspot : ✓ Connected
+  [ ] MCP webflow : ✓ Connected
+  [ ] MCP playwright : ✓ Connected (local stdio, pas d'OAuth)
+  [ ] Playwright Chromium binary installe (~/Library/Caches/ms-playwright/)
   [ ] Supabase project link OK (supabase status sans erreur)
   [ ] Edge Function contact-form deployee
   [ ] Edge Function hubspot-form-submit deployee
@@ -413,7 +459,11 @@ Verification rapide en 1 commande :
 echo "=== Checkpoint ===" && \
 test -f nopillo-landing-exemple/front/.env && echo "  .env: OK" || echo "  .env: MISSING" && \
 grep -q "PUBLIC_SUPABASE_URL=https" nopillo-landing-exemple/front/.env && echo "  URL: OK" || echo "  URL: MISSING" && \
-claude mcp list 2>&1 | grep "supabase.*Connected" && echo "  MCP: OK" || echo "  MCP: NOT AUTH"
+MCP_OUT=$(claude mcp list 2>&1) && \
+echo "$MCP_OUT" | grep -q "supabase.*Connected" && echo "  MCP supabase: OK" || echo "  MCP supabase: NOT AUTH" && \
+echo "$MCP_OUT" | grep -q "hubspot.*Connected" && echo "  MCP hubspot: OK" || echo "  MCP hubspot: NOT AUTH" && \
+echo "$MCP_OUT" | grep -q "webflow.*Connected" && echo "  MCP webflow: OK" || echo "  MCP webflow: NOT AUTH" && \
+echo "$MCP_OUT" | grep -q "playwright.*Connected" && echo "  MCP playwright: OK" || echo "  MCP playwright: FAILED (check Phase 2.5)"
 ```
 
 **Si UN seul check echoue : retour a l'etape correspondante. NE PAS lancer Phase 7.**
@@ -457,36 +507,95 @@ Si erreur :
 - `Connection refused` : le serveur n'a pas demarre, voir logs
 - `EADDRINUSE` : port 4321 deja pris, proposer `npm run dev -- --port 4322`
 
-**Etape 7.4 — Verification visuelle (optionnel)**
+**Etape 7.4 — Verification visuelle via Playwright MCP (automatique)**
 
-Si MCP Playwright dispo, prendre un screenshot :
+Maintenant que le MCP Playwright est connecte (Phase 6.3) et le serveur dev tourne (Phase 7.2), utiliser le MCP pour valider visuellement la landing.
 
-```bash
-# Si l'utilisateur a installe Playwright MCP global
-# Sinon : demander a l'etudiant d'ouvrir http://localhost:4321 dans son browser
-```
+Sequence d'appels MCP :
 
-OU demander a l'etudiant :
+1. **Naviguer vers la landing** :
+   ```
+   mcp__playwright__browser_navigate(url="http://localhost:4321")
+   ```
 
-> "Ouvre http://localhost:4321 dans ton browser. Tu vois la landing Nopillo (headband orange + hero indigo) ?"
+2. **Capturer l'accessibility snapshot** (analyse structure sans screenshot lourd) :
+   ```
+   mcp__playwright__browser_snapshot()
+   ```
+   Verifier dans le snapshot la presence de :
+   - Headband "Nopillo" (texte d'accroche en haut)
+   - Hero principal avec CTA
+   - Formulaire de contact (champs email, message)
+   - Footer
+   
+   Si l'un manque : la landing est cassee, voir Phase 7.3 (logs npm run dev).
 
-Si OUI : SUCCESS.
-Si NON : diagnostic (cf. error-patterns).
+3. **Screenshot pour l'etudiant** (preuve visuelle) :
+   ```
+   mcp__playwright__browser_take_screenshot(filename="landing-verification.png")
+   ```
+   Affiche le screenshot a l'etudiant : "Voila ce que ta landing donne. C'est bien ce que tu attendais ?"
 
-**Etape 7.5 — Test du formulaire end-to-end**
+4. **Fermer le browser** apres verification :
+   ```
+   mcp__playwright__browser_close()
+   ```
 
-Demander :
+Si Playwright MCP echoue (timeout, browser crash) :
+- Fallback : demander a l'etudiant > "Ouvre http://localhost:4321 dans ton browser. Tu vois la landing Nopillo (headband orange + hero indigo) ?"
+- Logger l'erreur Playwright pour debug ulterieur
 
-> "Scroll jusqu'au formulaire de contact, remplis avec ton email test, et clique Envoyer. Tu vois 'Merci !' ?"
+**Etape 7.5 — Test du formulaire end-to-end via Playwright MCP**
 
-Si OUI : verifier dans le Supabase de l'etudiant :
+Au lieu de demander a l'etudiant de remplir manuellement, automatiser via le MCP :
 
-```bash
-# Via supabase CLI
-supabase db query "SELECT email, created_at FROM public.leads ORDER BY created_at DESC LIMIT 1"
-```
+1. **Re-naviguer** vers la landing :
+   ```
+   mcp__playwright__browser_navigate(url="http://localhost:4321")
+   ```
 
-Si le lead apparait : **End-to-end OK**.
+2. **Snapshot** pour obtenir les refs des champs du form :
+   ```
+   mcp__playwright__browser_snapshot()
+   ```
+   Reperer les refs des inputs (email, message) et du bouton submit.
+
+3. **Remplir le formulaire** avec un email de test :
+   - Email : `test-setup-{timestamp}@example.com` (unique pour ne pas pollouer)
+   - Message : "Test setup automatique"
+   
+   Utiliser `mcp__playwright__browser_fill_form` ou `mcp__playwright__browser_type` selon les refs trouvees.
+
+4. **Cliquer Submit** :
+   ```
+   mcp__playwright__browser_click(ref=<bouton submit ref>)
+   ```
+
+5. **Attendre la confirmation** :
+   ```
+   mcp__playwright__browser_wait_for(text="Merci")
+   ```
+   Timeout 5s. Si pas de "Merci", recuperer le snapshot pour voir l'erreur.
+
+6. **Verifier dans Supabase** que le lead est arrive :
+   ```bash
+   cd nopillo-landing-exemple
+   supabase db query "SELECT email, created_at FROM public.leads WHERE email LIKE 'test-setup-%' ORDER BY created_at DESC LIMIT 1"
+   ```
+
+7. **Fermer le browser** :
+   ```
+   mcp__playwright__browser_close()
+   ```
+
+Si le lead apparait dans Supabase : **End-to-end OK** (form → Edge Function → table leads).
+
+Si echec :
+- Verifier les logs Edge Function : `supabase functions logs contact-form --project-ref <REF>`
+- Voir Phase 6.3 que les MCPs sont bien connectes
+- Voir Phase 6.4 que les Edge Functions sont deployees
+
+> **Pourquoi automatiser le test form ?** L'etudiant peut oublier de tester ou se tromper d'email. Avec Playwright on a une garantie deterministique que le flow complet marche, avec un trace dans Supabase pour preuve.
 
 ## Rapport final
 
@@ -495,20 +604,27 @@ Quand tout fonctionne :
 ```
 SETUP COMPLETE
 
-✓ OS detecte         : [Mac / Windows]
-✓ Pre-requis        : Node X / Git X / npm X
-✓ CLIs installes    : Netlify, Supabase
-✓ Auth CLIs         : Connecte
-✓ Repo clone        : ~/projets/nopillo-landing-exemple
-✓ Credentials       : Supabase configure (project ref: XXX)
-✓ Migrations        : table leads cree
-✓ Edge Functions    : contact-form + hubspot-form-submit deployees
-✓ Landing live      : http://localhost:4321
-✓ Form end-to-end   : Lead test insere dans Supabase
+✓ OS detecte             : [Mac / Windows]
+✓ Pre-requis             : Node X / Git X / npm X
+✓ CLIs installes         : Netlify, Supabase
+✓ Playwright Chromium    : installe (~150 MB cache npm)
+✓ Auth CLIs              : Connecte
+✓ Repo clone             : ~/projets/nopillovibecoding
+✓ Credentials            : Supabase configure (project ref: XXX)
+✓ MCPs Claude Code       : supabase + hubspot + webflow + playwright (4/4 Connected)
+✓ Migrations             : table leads cree
+✓ Edge Functions         : contact-form + hubspot-form-submit deployees
+✓ Landing live           : http://localhost:4321
+✓ Verification visuelle  : screenshot Playwright OK
+✓ Form end-to-end        : Lead test insere dans Supabase (via Playwright)
 
 PROCHAINES ETAPES
 1. Edite front/src/components/sections/Hero.astro pour personnaliser
-2. Lance `claude code` dans ce dossier pour avoir l'aide de Claude
+2. Demande a Claude Code des modifications, il a 4 MCPs pour t'aider :
+   - supabase : DB, Edge Functions, logs
+   - hubspot  : CRM, forms, contacts
+   - webflow  : pages, components, DS
+   - playwright : tests visuels, debug E2E
 3. Consulte docs/student-onboarding/ pour aller plus loin
 
 Temps total : XX min. Bravo !

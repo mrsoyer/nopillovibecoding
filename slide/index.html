@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>Formation Vibecoding J1 — Skill / Rule / MCP / Hook</title>
+  <title>Formation Vibecoding J1 — Skill / Rule / MCP</title>
 
   <!-- Reveal.js 5 core CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reset.css">
@@ -110,7 +110,7 @@
       <!-- ============================================================ -->
       <section class="slide-titre">
         <img src="assets/logo-nopillo.svg" class="logo" alt="Nopillo">
-        <h1>Skill / Rule / MCP / Hook</h1>
+        <h1>Skill / Rule / MCP</h1>
         <p class="subtitle">Les 4 mecanismes pour ancrer Claude dans la realite de TON projet.</p>
         <p class="meta">Formation Vibecoding · Jour 1 · Thomas (Feaderz)</p>
 
@@ -151,10 +151,98 @@
       </section>
 
       <!-- ============================================================ -->
+      <!-- SLIDE 2.5 — ARCHITECTURE FRONT / BACK                        -->
+      <!-- ============================================================ -->
+      <section>
+        <h2 style="margin-bottom: 0.2em;">Architecture du projet</h2>
+        <p class="muted" style="margin-bottom: 0.5em;">Tout projet landing = <strong>2 layers</strong>. Chacun a ses fichiers, ses rules, ses outils.</p>
+
+        <div class="two-col">
+
+          <!-- ===== FRONT ===== -->
+          <div class="card">
+            <div style="display: flex; align-items: center; gap: 0.5em; margin-bottom: 0.4em;">
+              <span class="pill pill-primary">FRONT</span>
+              <strong style="font-family: 'futura-pt', sans-serif; font-size: 0.95em;">Ce qu'on voit</strong>
+            </div>
+            <p class="muted" style="font-size: 0.6em; margin: 0 0 0.4em 0;">Publie sur Netlify · <a href="https://vibecoding-formation-j1.netlify.app" target="_blank">.netlify.app</a></p>
+
+<pre style="font-size: 0.4em; margin: 0.2em 0; padding: 0.6em;"><code class="language-bash">nopillo-landing-exemple/
+└── front/
+    └── src/
+        ├── components/
+        │   ├── Hero.astro
+        │   ├── ContactForm.tsx
+        │   ├── FAQ.astro
+        │   ├── Testimonials.astro
+        │   ├── Simulator.tsx
+        │   ├── Trustpilot.astro
+        │   └── ...
+        ├── pages/
+        ├── layouts/
+        └── lib/  (DKI, tracking)</code></pre>
+
+<pre style="font-size: 0.4em; margin: 0.2em 0; padding: 0.6em;"><code class="language-bash">.claude/rules/front/
+├── hero.md
+├── contact-form.md
+├── dki-hero.md
+├── pages-index.md
+└── lib-tracking.md</code></pre>
+
+            <p style="font-size: 0.65em; margin: 0.3em 0 0 0;">
+              <strong>Gere :</strong> sections visibles, formulaires UI, animations, tracking GTM/GA4, DKI.
+            </p>
+          </div>
+
+          <!-- ===== BACK ===== -->
+          <div class="card card-soft">
+            <div style="display: flex; align-items: center; gap: 0.5em; margin-bottom: 0.4em;">
+              <span class="pill pill-mint">BACK</span>
+              <strong style="font-family: 'futura-pt', sans-serif; font-size: 0.95em;">Le moteur</strong>
+            </div>
+            <p class="muted" style="font-size: 0.6em; margin: 0 0 0.4em 0;">Supabase (DB + Edge Functions Deno)</p>
+
+<pre style="font-size: 0.4em; margin: 0.2em 0; padding: 0.6em;"><code class="language-bash">nopillo-landing-exemple/
+└── supabase/
+    ├── functions/
+    │   ├── contact-form/
+    │   │   └── index.ts
+    │   └── hubspot-form-submit/
+    │       └── index.ts
+    ├── migrations/
+    │   └── 2026..._create_leads.sql
+    └── config.toml</code></pre>
+
+<pre style="font-size: 0.4em; margin: 0.2em 0; padding: 0.6em;"><code class="language-bash">.claude/rules/back/
+├── contact-form.md
+└── hubspot-form-submit.md</code></pre>
+
+            <p style="font-size: 0.65em; margin: 0.3em 0 0 0;">
+              <strong>Gere :</strong> table <code>leads</code>, forward HubSpot, avis Trustpilot, stockage securise (RLS).
+            </p>
+          </div>
+
+        </div>
+
+        <p class="center muted" style="font-size: 0.7em; margin-top: 0.5em;">
+          <strong>Convention</strong> : 1 fichier source = 1 rule pour le documenter (front OU back).
+        </p>
+
+        <aside class="notes">
+          Concept fondamental : tout projet a 2 layers. Les comprendre, c'est savoir ou aller pour chaque modification.
+          FRONT : tout ce qui est visible = composants Astro/React + leurs rules dans .claude/rules/front/.
+          BACK : tout ce qui n'est pas visible = DB + Edge Functions Supabase + rules dans .claude/rules/back/.
+          Exemple concret : un formulaire HubSpot = composant ContactForm.tsx (FRONT) + Edge Function hubspot-form-submit (BACK) qui forward vers HubSpot API.
+          Insister sur la convention : 1 fichier source = 1 rule. Quand tu modifies Hero.astro, Claude charge automatiquement hero.md.
+          Cette slide pose les bases avant d'introduire les 5 mecanismes (slide suivante).
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
       <!-- SLIDE 3 — LES 5 MECANISMES                                   -->
       <!-- ============================================================ -->
       <section>
-        <h2>Les 5 mecanismes de Claude Code</h2>
+        <h2>Les 4 mecanismes de Claude Code</h2>
         <table>
           <thead>
             <tr>
@@ -183,11 +271,6 @@
               <td><code>MCP</code></td>
               <td>Outils externes</td>
               <td>Au boot session</td>
-            </tr>
-            <tr>
-              <td><code>Hook</code></td>
-              <td>Action qui DOIT s'executer</td>
-              <td>Lifecycle event</td>
             </tr>
           </tbody>
         </table>
@@ -428,70 +511,68 @@ model: sonnet
       </section>
 
       <!-- ============================================================ -->
-      <!-- SLIDE 11 — HOOKS                                             -->
+      <!-- SLIDE NOUVELLE — NOS SKILLS DISPONIBLES                      -->
       <!-- ============================================================ -->
       <section>
-        <h2>Hooks — l'enforcement deterministe</h2>
-        <p>Quand : une action <strong>DOIT</strong> s'executer (lint, audit).</p>
-        <div class="two-col">
+        <h2 style="margin-bottom: 0.2em;">Les 13 skills deja dispos dans ce projet</h2>
+        <p class="muted" style="margin-bottom: 0.5em;">Tu vas les utiliser aujourd'hui. Ils suivent tous le pipeline Documentation-First.</p>
+
+        <div class="two-col" style="gap: 0.6em;">
+
           <div class="card">
-            <strong>Skill</strong><br>
-            <span class="muted">Claude decide d'appeler (peut oublier)</span>
+            <span class="pill pill-primary">CREATION DOCS</span>
+            <ul style="font-size: 0.7em; margin: 0.4em 0 0.2em 1em;">
+              <li><code>/doc-maker</code> — Doc reference (web search auto)</li>
+              <li><code>/cdc-maker</code> — Cahier des charges structure</li>
+              <li><code>/skill-maker</code> — Genere un skill custom</li>
+              <li><code>/rule-maker</code> — Genere une rule path-scoped</li>
+            </ul>
           </div>
+
           <div class="card card-soft">
-            <strong>Hook</strong><br>
-            <span class="muted">Le harness execute (oubli impossible)</span>
+            <span class="pill pill-mint">PROJET LANDING</span>
+            <ul style="font-size: 0.7em; margin: 0.4em 0 0.2em 1em;">
+              <li><code>/init-landing-stack</code> — Bootstrap Astro+Supabase+Netlify</li>
+              <li><code>/apply-nopillo-ds</code> — Applique le DS Nopillo</li>
+              <li><code>/extract-design-system</code> — Aspire un DS depuis URL</li>
+              <li><code>/run-dev</code> — Lance dev server local (port 4321)</li>
+              <li><code>/deploy-netlify</code> — Build + deploy production</li>
+            </ul>
           </div>
+
+          <div class="card card-soft">
+            <span class="pill pill-mint">INTEGRATIONS</span>
+            <ul style="font-size: 0.7em; margin: 0.4em 0 0.2em 1em;">
+              <li><code>/connect-hubspot-form</code> — Form HubSpot dans Webflow</li>
+              <li><code>/hubspot-edge-form</code> — Edge Function HubSpot forward</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <span class="pill pill-primary">SETUP & MAINTENANCE</span>
+            <ul style="font-size: 0.7em; margin: 0.4em 0 0.2em 1em;">
+              <li><code>/student-setup</code> — Onboarding etudiant (ce que tu as lance)</li>
+              <li><code>/context-guardian</code> — Audit sante du projet (score /80)</li>
+            </ul>
+          </div>
+
         </div>
-<pre><code class="language-json">// .claude/settings.json
-{
-  "hooks": {
-    "PostToolUse": [{
-      "matcher": "Edit|Write",
-      "command": "cd front && npm run lint -- --fix"
-    }]
-  }
-}</code></pre>
-        <p class="muted">→ Apres CHAQUE Edit ou Write, lint se lance.</p>
+
+        <p class="center" style="font-size: 0.7em; margin-top: 0.4em;">
+          <strong>Localisation</strong> : <code>.claude/skills/[nom]/SKILL.md</code> &nbsp;·&nbsp;
+          <strong>Cet apres-midi</strong> : tu ajoutes le <strong>14eme</strong> skill (le tien).
+        </p>
 
         <aside class="notes">
-          Hook = enforcement, garanti.
-          Skill : Claude peut oublier. Hook : c'est le systeme qui force.
-          Useful pour : lint apres edit, audit avant commit, format auto.
-          Slide courte (1 min), enchainer vite sur decision tree.
-        </aside>
-      </section>
-
-      <!-- ============================================================ -->
-      <!-- SLIDE 12 — DECISION TREE                                     -->
-      <!-- ============================================================ -->
-      <section>
-        <h2>Le decision tree</h2>
-        <div class="decision-tree"><span class="q">Q1:</span> Procedure repetable avec etapes ?
-    <span class="yes">OUI</span> → <span class="mecanism">SKILL</span>  (.claude/skills/[verbe]/)
-    NON → Q2
-
-<span class="q">Q2:</span> Fait permanent toutes sessions ?
-    <span class="yes">OUI</span> → <span class="mecanism">CLAUDE.md</span> (&lt; 80 lignes)
-    NON → Q3
-
-<span class="q">Q3:</span> Fait specifique a UN fichier ?
-    <span class="yes">OUI</span> → <span class="mecanism">RULE</span> (.claude/rules/ avec paths:)
-    NON → Q4
-
-<span class="q">Q4:</span> Action qui DOIT s'executer ?
-    <span class="yes">OUI</span> → <span class="mecanism">HOOK</span> (settings.json)
-    NON → Q5
-
-<span class="q">Q5:</span> Outil / API externe ?
-    <span class="yes">OUI</span> → <span class="mecanism">MCP</span> (claude mcp add ...)
-    NON → Pas besoin d'ajouter de contexte</div>
-
-        <aside class="notes">
-          Vous avez UN doute ? Vous prenez ce tree.
-          C'est LA slide a photographier MAINTENANT avec votre tel.
-          On va l'appliquer sur des cas concrets a la slide suivante.
-          Laisser 30 sec de pause pour qu'ils sortent les tels.
+          Montrer concretement les skills qu'ils ont sous la main DEJA.
+          Ils n'ont pas a inventer : 11 skills sont dans le repo qu'ils ont clone.
+          Insister sur la categorisation :
+          - "Creation docs" = le pipeline Documentation-First (les 4 verbes magiques)
+          - "Projet landing" = les outils pour bootstrap/styler une landing
+          - "Integrations" = les ponts vers les services externes (HubSpot)
+          - "Setup & Maintenance" = les outils transversaux
+          A 14h30 ils creeront le 12eme. Faire le lien explicite.
+          Demander : "Lequel vous intrigue le plus ? On peut le tester en demo si on a le temps."
         </aside>
       </section>
 
@@ -508,7 +589,6 @@ model: sonnet
             <tr><td>"Resume ce que fait Hero.astro"</td><td><span class="pill pill-soft">Rule</span></td></tr>
             <tr><td>"TypeScript strict partout"</td><td><span class="pill pill-soft">CLAUDE.md</span></td></tr>
             <tr><td>"Deploy Netlify + Lighthouse"</td><td><span class="pill pill-soft">Skill</span></td></tr>
-            <tr><td>"Lint auto apres Edit"</td><td><span class="pill pill-soft">Hook</span></td></tr>
             <tr><td>"Connecter a Supabase"</td><td><span class="pill pill-soft">MCP</span></td></tr>
             <tr><td>"Convention naming kebab-case"</td><td><span class="pill pill-soft">CLAUDE.md</span></td></tr>
             <tr><td>"Audit cross-browser"</td><td><span class="pill pill-soft">Skill</span></td></tr>
@@ -518,8 +598,9 @@ model: sonnet
         <p class="muted center" style="margin-top: 0.4em;">→ Vous trouvez l'intuition tres vite.</p>
 
         <aside class="notes">
-          Question piege : "Audit cross-browser". Skill ou hook ?
-          Skill : tu l'appelles quand tu veux. Hook : ca se fait apres chaque edit.
+          Question piege : "Convention naming kebab-case". Rule ou CLAUDE.md ?
+          CLAUDE.md : c'est une convention globale (toutes sessions, tout projet).
+          Rule : ce serait scope a un fichier (pas pertinent ici).
           Poser des questions, debattre.
           Cap a 3 min de Q/R, sinon "on traite ca a 14h30 sur ton skill".
         </aside>
@@ -603,6 +684,63 @@ model: sonnet
       </section>
 
       <!-- ============================================================ -->
+      <!-- SLIDE NOUVELLE — COMMENT JE CREE UN SKILL                    -->
+      <!-- ============================================================ -->
+      <section class="slide-methodo">
+        <h2 style="color: var(--color-brand-primary); margin-bottom: 0.2em;">Comment JE cree un skill</h2>
+        <p class="muted" style="margin-bottom: 0.5em;">Ma recette perso, etape par etape. 5 phases, 2 secrets en or.</p>
+
+        <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.4em; margin-bottom: 0.5em;">
+
+          <div class="pipeline-step step-1" style="font-size: 0.95em;">
+            <span class="step-num">①</span>
+            <span class="step-name">ENQUETER</span>
+            <span class="step-cmd">/doc-maker</span>
+            <span class="step-meta">5-10 docs sur<br>sujets connexes<br><strong>Astuce or :</strong><br>plusieurs chats<br>en parallele</span>
+          </div>
+
+          <div class="pipeline-step step-2" style="font-size: 0.95em;">
+            <span class="step-num">②</span>
+            <span class="step-name">PROTOTYPER</span>
+            <span class="step-cmd">Nouveau chat</span>
+            <span class="step-meta">"Charge en contexte<br>docs X, Y, Z"<br><br>Je fais le<br>workflow <strong>EN CHAT</strong></span>
+          </div>
+
+          <div class="pipeline-step step-3" style="font-size: 0.95em;">
+            <span class="step-num">③</span>
+            <span class="step-name">CADRER</span>
+            <span class="step-cmd">/cdc-maker</span>
+            <span class="step-meta">Quand le workflow<br>chat marche :<br>"genere CDC pour<br>creer ce skill"</span>
+          </div>
+
+          <div class="pipeline-step step-4" style="font-size: 0.95em;">
+            <span class="step-num">④</span>
+            <span class="step-name">EXECUTER</span>
+            <span class="step-cmd">/skill-maker</span>
+            <span class="step-meta">Le skill est cree<br>dans <code>.claude/<br>skills/[nom]/</code><br>SKILL.md + refs</span>
+          </div>
+
+          <div class="pipeline-step step-4" style="font-size: 0.95em; background: var(--color-indigo-50); border-color: var(--color-brand-primary);">
+            <span class="step-num">⑤</span>
+            <span class="step-name">TESTER</span>
+            <span class="step-cmd">Nouveau chat</span>
+            <span class="step-meta">Test fresh context<br>Si echec : iterer<br>(retour etape 3<br>ou 4)</span>
+          </div>
+
+        </div>
+
+        <aside class="notes">
+          C'est MA recette, validee sur 13 skills crees dans ce projet.
+          Insister sur les 2 secrets en or :
+          1. Pourquoi paralleliser /doc-maker : un doc-maker prend 5-10 min, en serie c'est 1h, en parallele 10 min.
+          2. Pourquoi prototyper EN CHAT : si je code direct le skill, je decouvre que ca marche pas et je dois tout refaire. En chat, j'itere vite.
+          Question : "qui de vous a deja code un truc avant d'avoir teste si l'idee marchait ?" — montrer que tout le monde le fait.
+          Cet apres-midi : ils vont suivre EXACTEMENT ce workflow pour leur skill perso.
+          Faire le lien : "etapes 1-2 = doc + chat = c'est ce qu'on a vu en demos a 14h. Maintenant vous savez la suite."
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
       <!-- SLIDE 16 — TOP 7 ANTI-PATTERNS                               -->
       <!-- ============================================================ -->
       <section>
@@ -626,10 +764,6 @@ model: sonnet
         <div class="antipattern">
           <span class="cross">✗</span> Skill avec 20 etapes
           <span class="arrow">→</span> <span class="fix">Decouper en 2 skills</span>
-        </div>
-        <div class="antipattern">
-          <span class="cross">✗</span> Hook sans confirmation
-          <span class="arrow">→</span> <span class="fix">Operations non destructives</span>
         </div>
         <div class="antipattern">
           <span class="cross">✗</span> Secrets dans CLAUDE.md
@@ -687,13 +821,12 @@ model: sonnet
       <section class="slide-recap">
         <h2 style="color: var(--color-brand-primary); margin-bottom: 0.4em;">A retenir</h2>
         <div class="frame">
-          <h3>Les 5 mecanismes</h3>
+          <h3>Les 4 mecanismes</h3>
           <ol>
             <li><code>CLAUDE.md</code> = regles globales (&lt; 80 lignes)</li>
             <li><code>Rule</code> = CE qu'est un fichier</li>
             <li><code>Skill</code> = COMMENT faire un workflow</li>
             <li><code>MCP</code> = outils externes</li>
-            <li><code>Hook</code> = garantir une action</li>
           </ol>
 
           <h3>Ma methode</h3>
