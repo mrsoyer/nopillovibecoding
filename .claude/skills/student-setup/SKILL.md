@@ -16,6 +16,20 @@ Tu guides un etudiant debutant (Mac ou Windows) pas a pas, de zero jusqu'a `npm 
 
 **Tu iteres jusqu'a ce que ca fonctionne.** Si une etape echoue, tu diagnostiques, proposes un fix, et retentes.
 
+## REGLE D'OR (lis ca AVANT TOUT)
+
+> **Tout doit etre installe dans le dossier ou tourne Claude Code (`pwd`)** — JAMAIS dans `~/projets/`, jamais ailleurs.
+>
+> L'etudiant a lance Claude Code depuis SON dossier (ex : `/Users/thomas/leartest/`). C'est LA que doit aller :
+> - Le clone du repo (`git clone` dans un tmp puis `cp -R` vers cwd)
+> - Le `.env` (`<cwd>/nopillo-landing-exemple/front/.env`)
+> - Le `.mcp.json` (`<cwd>/.mcp.json`)
+> - Tout le contenu (`docs/`, `slide/`, `nopillo-landing-exemple/`, etc.)
+>
+> **Au debut du workflow** : capture le cwd dans une variable `CWD=$(pwd)` et utilise `$CWD` partout pour eviter toute confusion. NE JAMAIS faire `cd ~/projets` ou creer un dossier ailleurs.
+>
+> **Verification systematique** : avant chaque commande qui ecrit, faire `pwd` pour s'assurer qu'on est bien dans `$CWD` ou un sous-dossier de `$CWD`.
+
 ## References disponibles
 
 | Fichier | Quand le lire |
@@ -246,64 +260,123 @@ supabase projects list 2>&1 | head -3
 
 Si "Access token not provided" : lancer `supabase login`.
 
-### Phase 4 — Cloner le repo du prof
+### Phase 4 — Installer le projet DANS le dossier courant (cwd)
 
-**URL fixe du projet** : `https://github.com/mrsoyer/nopillovibecoding`
+> **REGLE CRITIQUE** : tout doit etre installe dans le dossier ou tourne Claude Code (`pwd`), **JAMAIS** dans `~/projets/` ou un autre emplacement. L'etudiant a lance le skill depuis SON dossier (ex : `/Users/thomas/leartest/`) et c'est LA que tout doit aller.
 
-**Structure du repo** (workspace + projet dans sous-dossier) :
+**URL du repo source** : `https://github.com/mrsoyer/nopillovibecoding`
+
+**Structure cible apres install** (le `cwd` devient le workspace) :
 ```
-nopillovibecoding/                    <- workspace (racine du clone)
-├── .claude/                          <- skills + rules
-├── .mcp.json                         <- config MCPs (a configurer)
-├── CLAUDE.md
-├── docs/
-└── nopillo-landing-exemple/          <- LE PROJET landing
-    ├── front/                         <- ou se trouve .env + package.json
-    ├── supabase/                      <- migrations + Edge Functions
-    └── netlify.toml
+<cwd>/                                <- ou Claude Code tourne (pwd)
+├── .claude/
+│   ├── rules/                        <- ajoute depuis le repo
+│   └── skills/
+│       ├── student-setup/            <- deja la (zip telecharge), version repo prend le pas
+│       ├── apply-auto-mode/          <- ajoute
+│       ├── ...                       <- ajoute
+├── .mcp.json                         <- ajoute (avec project_ref a remplacer)
+├── .gitignore, .claudeignore         <- ajoutes
+├── CLAUDE.md, README.md              <- ajoutes
+├── docs/                             <- ajoute
+├── nopillo-landing-exemple/          <- LE PROJET landing
+│   ├── front/                        <- .env + package.json
+│   ├── supabase/                     <- migrations + Edge Functions
+│   └── netlify.toml
+├── slide/                            <- deck formation
+└── student-setup-skill.zip           <- met a jour si present
 ```
 
-Verifier d'abord si on est deja dans le repo :
+**Etape 4.1 — Verifier le cwd**
 
 ```bash
-git remote -v 2>&1 | grep nopillovibecoding
+CWD=$(pwd)
+echo "Installation cible : $CWD"
+ls -la "$CWD"
 ```
 
-**Si deja clone** : `cd` vers la racine du workspace `nopillovibecoding/` et passer a Phase 5.
+Confirmer a l'etudiant :
+> "Je vais installer le projet Nopillo dans `$CWD`. C'est OK ?"
 
-**Si pas clone** :
+Si l'etudiant veut changer de dossier, lui demander de quitter Claude Code, `cd` ailleurs, et relancer le skill.
+
+**Etape 4.2 — Detecter conflits potentiels**
 
 ```bash
-# Mac
-mkdir -p ~/projets && cd ~/projets
+# Verifier .git existant (autre repo)
+test -d "$CWD/.git" && echo "WARN_GIT_EXIST" || echo "OK_no_git"
 
-# Windows PowerShell
-mkdir $HOME\projets -Force; cd $HOME\projets
+# Verifier si le repo nopillovibecoding est deja installe ici
+test -d "$CWD/nopillo-landing-exemple" && echo "WARN_ALREADY_INSTALLED" || echo "OK_not_installed"
+
+# Verifier CLAUDE.md / README.md existants
+test -f "$CWD/CLAUDE.md" && echo "WARN_CLAUDEMD_EXIST" || echo "OK"
 ```
 
-Puis cloner :
+Si `WARN_GIT_EXIST` : demander a l'etudiant
+> "Le dossier `$CWD` est deja un repo git. Si je clone par-dessus, l'historique git sera ecrase. Continuer ?"
+
+Si `WARN_ALREADY_INSTALLED` : passer a la mise a jour (etape 4.4) au lieu de l'install initiale.
+
+**Etape 4.3 — Clone dans un tmp puis copie dans cwd**
 
 ```bash
-git clone https://github.com/mrsoyer/nopillovibecoding.git
-cd nopillovibecoding
+CWD=$(pwd)
+TMP=$(mktemp -d)
+echo "Clone temporaire dans : $TMP"
+
+git clone --depth 1 https://github.com/mrsoyer/nopillovibecoding.git "$TMP/nopillo" 2>&1
 ```
 
 Si l'auth GitHub est demandee :
 - **Option facile** : `gh CLI`
   - Mac : `brew install gh && gh auth login`
   - Windows : `winget install GitHub.cli && gh auth login`
-  - Puis re-tenter : `gh repo clone mrsoyer/nopillovibecoding`
 - **Sinon** : Git Credential Manager gere l'auth via browser au premier `git clone`
 
-Verifier que le clone a reussi :
+Puis copier le contenu (le `/.` est important, ca copie aussi les dotfiles) :
 
 ```bash
-ls -la
-# doit contenir : .claude/ .mcp.json CLAUDE.md docs/ nopillo-landing-exemple/
+cp -R "$TMP/nopillo/." "$CWD/"
+echo "Copie OK"
+
+# Cleanup
+rm -rf "$TMP"
+echo "Tmp nettoye"
 ```
 
-**Important** : a partir de maintenant, ton **cwd de reference est** `nopillovibecoding/` (racine workspace).
-Les commandes Supabase et npm seront dans le sous-dossier `nopillo-landing-exemple/`.
+> **Pourquoi pas `git clone $CWD` directement ?** Git refuse de cloner dans un dossier non-vide. Le tmp + cp -R contourne ca proprement et permet aussi de fusionner avec des fichiers preexistants (comme le `.claude/skills/student-setup/` que l'etudiant a telecharge).
+
+**Etape 4.4 — Cas mise a jour (repo deja installe)**
+
+Si l'etudiant relance le skill et que le repo est deja la :
+
+```bash
+CWD=$(pwd)
+cd "$CWD"
+git fetch origin main && git pull origin main
+```
+
+Si conflit local : demander a l'etudiant ce qu'il prefere (stash, reset, ou skip).
+
+**Etape 4.5 — Verifier le clone**
+
+```bash
+ls -la "$CWD" | head -20
+```
+
+Doit afficher au minimum :
+- `.claude/`
+- `.git/`
+- `.mcp.json`
+- `CLAUDE.md`
+- `nopillo-landing-exemple/`
+- `docs/`
+- `slide/`
+
+Si l'un manque : retour etape 4.3, verifier le `cp -R`.
+
+**Important** : a partir de maintenant, ton **cwd reste le meme** ($CWD initial). Toutes les commandes suivantes sont relatives a $CWD. Les commandes Supabase et npm seront dans le sous-dossier `nopillo-landing-exemple/`.
 
 ### Phase 5 — Recuperer les credentials Supabase
 
@@ -328,7 +401,7 @@ Si invalide : re-demander avec exemple.
 
 > **critique** : ces 5 etapes doivent toutes etre completes AVANT de lancer `npm run dev` (Phase 7). Si tu skip, le formulaire ne marchera pas et l'etudiant aura une page cassee.
 
-Depuis la racine `nopillovibecoding/`.
+Depuis la racine du cwd (`$CWD` initial, ex: `/Users/thomas/leartest/`).
 
 **Etape 6.1 — Creer front/.env (obligatoire)**
 
@@ -361,7 +434,7 @@ Si vide ou XXX : stop, redemander a l'etudiant.
 **Etape 6.2 — Configurer .mcp.json (racine workspace)**
 
 ```bash
-cd ../..    # remonter a nopillovibecoding/
+cd "$CWD"    # racine workspace (le cwd initial, pas un sous-dossier)
 ```
 
 Remplacer le `project_ref` du prof par celui de l'etudiant :
@@ -475,7 +548,7 @@ echo "$MCP_OUT" | grep -q "playwright.*Connected" && echo "  MCP playwright: OK"
 **Etape 7.1 — Installer dependances**
 
 ```bash
-cd nopillo-landing-exemple/front      # depuis racine nopillovibecoding/
+cd "$CWD/nopillo-landing-exemple/front"   # depuis cwd racine workspace
 npm install
 ```
 
@@ -609,7 +682,7 @@ SETUP COMPLETE
 ✓ CLIs installes         : Netlify, Supabase
 ✓ Playwright Chromium    : installe (~150 MB cache npm)
 ✓ Auth CLIs              : Connecte
-✓ Repo clone             : ~/projets/nopillovibecoding
+✓ Workspace installe     : $CWD (le dossier ou tu as lance Claude Code)
 ✓ Credentials            : Supabase configure (project ref: XXX)
 ✓ MCPs Claude Code       : supabase + hubspot + webflow + playwright (4/4 Connected)
 ✓ Migrations             : table leads cree
